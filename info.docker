@@ -1,0 +1,6 @@
+//procedura di creazione docker file per spring
+
+mkdir build/dependency;
+
+//spezzettate il codice se ci sono problemi
+mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*.jar)
