@@ -1,10 +1,21 @@
 package it.vvfriva.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * 
  * @author simone
@@ -28,6 +39,19 @@ public class Articoli {
 	
 	@Column(name="abilita_taglia")
 	private Boolean abilitaTaglia;
+	
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY)
+	@NotFound(action = NotFoundAction.IGNORE)
+	@JoinColumn(name = "id_articolo",insertable = false, updatable = false)
+	private List<ArticoliDepositi> depositi;
+
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY)
+	@NotFound(action = NotFoundAction.IGNORE)
+	@JoinColumn(name = "id_articolo", insertable = false, updatable = false)
+	private List<ArticoliCategorie> categorie;
+	
 	
 	public Articoli() {
 		
@@ -101,5 +125,33 @@ public class Articoli {
 	 */
 	public void setAbilitaTaglia(Boolean abilitaTaglie) {
 		this.abilitaTaglia = abilitaTaglie;
+	}
+
+	/**
+	 * @return the depositi
+	 */
+	public List<ArticoliDepositi> getDepositi() {
+		return depositi;
+	}
+
+	/**
+	 * @param depositi the depositi to set
+	 */
+	public void setDepositi(List<ArticoliDepositi> depositi) {
+		this.depositi = depositi;
+	}
+
+	/**
+	 * @return the categorie
+	 */
+	public List<ArticoliCategorie> getCategorie() {
+		return categorie;
+	}
+
+	/**
+	 * @param categorie the categorie to set
+	 */
+	public void setCategorie(List<ArticoliCategorie> categorie) {
+		this.categorie = categorie;
 	}
 }

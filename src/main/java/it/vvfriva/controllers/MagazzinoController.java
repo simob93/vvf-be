@@ -88,9 +88,13 @@ public class MagazzinoController {
 	 *************************************************************************************/
 	
 	@GetMapping("/articoli/list")
-	private @ResponseBody JsonResponse<List<Articoli>> listArticoli() {
-		return articoliService.list();
+	private @ResponseBody JsonResponse<List<Articoli>> listArticoli(
+			@RequestParam(value = "descr", required = false) String descrizione,
+			@RequestParam(value = "idDeposito", required = false) Integer idDeposito,
+			@RequestParam(value = "idCategoria", required = false) Integer idCategoria) {
+		return articoliService.list(descrizione, idDeposito, idCategoria);
 	}
+	
 	
 	@GetMapping("/articoli/get")
 	private @ResponseBody JsonResponse<Articoli> getArticoloById(@RequestParam("id") Integer id) {

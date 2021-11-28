@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Comuni;
+import it.vvfriva.entity.Dotazione;
 import it.vvfriva.entity.Scadenze;
 import it.vvfriva.entity.Vigile;
 import it.vvfriva.entity.VigileCertificati;
@@ -31,10 +32,12 @@ import it.vvfriva.entity.VigilePatenti;
 import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.VigileManager;
 import it.vvfriva.models.JsonResponse;
+import it.vvfriva.models.KeyValueDate;
 import it.vvfriva.models.KeyValueTipiScadenza;
 import it.vvfriva.models.ModelInfoVigili;
 import it.vvfriva.models.ModelPrntVigili;
 import it.vvfriva.models.VigileModel;
+import it.vvfriva.services.DotazioneService;
 import it.vvfriva.services.ScadenzeService;
 import it.vvfriva.services.VigileCertificatiService;
 import it.vvfriva.services.VigilePatentiService;
@@ -57,11 +60,12 @@ public class VigileController {
 	@Autowired VigileCertificatiService vigileCertificatiService;
 	@Autowired ScadenzeService scadenzeService;
 	@Autowired VigileManager vigileManager;
+	@Autowired DotazioneService dotazioneService;
 	@Autowired
 	private ResourceLoader resourceLoader;
 	
 	/***********************************************************************************************************
-	 ************************* Sezione per gestione vigile******************************************************
+	 * API GESTIONE VIGILE
 	 ***********************************************************************************************************/
 	
 	/**
@@ -189,7 +193,7 @@ public class VigileController {
 	}
 	
 	/***********************************************************************************************************
-	 ************************* Sezione per gestione patenti vigile *********************************************
+	 * API GESTIONE PATENTI 
 	 ***********************************************************************************************************/
 	/**
 	 * 
@@ -266,7 +270,7 @@ public class VigileController {
 	}
 	
 	/***********************************************************************************************************
-	 ************************* Sezione per gestione certificazioni *********************************************
+	 * API GESTIONE CERTIFICATI
 	 ***********************************************************************************************************/
 
 	@PostMapping(path = "/certified/new")
@@ -285,4 +289,56 @@ public class VigileController {
 	public @ResponseBody JsonResponse<VigileCertificati> deleteCertificato(@PathVariable("id") Integer id) {
 		return vigileCertificatiService.delete(id);
 	}
+	
+	/***********************************************************************************************************
+	 * API GESTIONE DOTAZIONI VIGILE  
+	 ***********************************************************************************************************/
+	
+	@GetMapping("/dotazione/cbox")
+	public @ResponseBody JsonResponse<List<KeyValueDate>> listCbox(@RequestParam("idVigile") Integer idVigile) {
+		return dotazioneService.listCbox(idVigile);
+	}
+	
+	@GetMapping("/dotazione/get")
+	public @ResponseBody JsonResponse<Dotazione> get(@RequestParam("id") Integer id) {
+		return dotazioneService.getObjectById(id);
+	}
+	
+	/**
+	 * 
+	 * @param dotazione
+	 * @return
+	 */
+	@PostMapping("/dotazione/save")
+	public @ResponseBody JsonResponse<Dotazione> saveDotazione(@RequestBody Dotazione dotazione) {
+		return dotazioneService.saveOrUpdate(dotazione, DbOperation.INSERT);
+	}
+	/**
+	 * 
+	 * @param dotazione
+	 * @return
+	 */
+	@PostMapping("/dotazione/multisave")
+	public @ResponseBody JsonResponse<Dotazione> saveDotazione(@RequestBody List<Dotazione> dotazione) {
+		return dotazioneService.insert(dotazione);
+	}
+	/**
+	 * 
+	 * @param dotazione
+	 * @return
+	 */
+	@PostMapping("/dotazione/update")
+	public @ResponseBody JsonResponse<Dotazione> updateDotazione(@RequestBody Dotazione dotazione) {
+		return dotazioneService.saveOrUpdate(dotazione, DbOperation.UPDATE);
+	}
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/dotazione/delete")
+	public @ResponseBody JsonResponse<Dotazione> deleteDotazione(@PathVariable("id") Integer id) {
+		return dotazioneService.delete(id);
+	}
+	
 }

@@ -31,6 +31,7 @@ public class Utils {
 	public static boolean gtZero(Integer number) {
 		return integerCompareTo(number, 0) > 0;
 	}
+	
 	/**
 	 * 
 	 * @param chart

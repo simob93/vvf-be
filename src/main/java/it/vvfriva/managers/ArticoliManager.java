@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -22,6 +23,7 @@ import it.vvfriva.entity.Articoli;
 import it.vvfriva.repository.ArticoliRepository;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.Utils;
+
 /**
  * @author simone
  *
@@ -31,33 +33,47 @@ import it.vvfriva.utils.Utils;
 public class ArticoliManager extends DbManagerStandard<Articoli> {
 
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	@Autowired ArticoliRepository repository;
-	@Autowired EntityManager em;
-	
+
+	@Autowired
+	ArticoliRepository repository;
+	@Autowired
+	EntityManager em;
+
 	@Override
 	public CrudRepository<Articoli, Integer> getRepository() {
 		return repository;
 	}
-	
+
 	/**
 	 * Ritorna tutti gli articoli 
+	 * @param idCategoria 
+	 * @param idDeposito 
+	 * @param descrizione 
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<Articoli> list() throws Exception {
+	public List<Articoli> list(String descrizione, Integer idDeposito, Integer idCategoria) throws Exception {
 		List<Articoli> data = null;
 		try {
+			
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<Articoli> cr = cb.createQuery(Articoli.class);
 			Root<Articoli> root = cr.from(Articoli.class);
 			cr.select(root);
 			List<Predicate> predicates = new ArrayList<Predicate>();
 			
-		    cr.where(predicates.toArray(new Predicate[0]));
-			TypedQuery<Articoli> query = em.createQuery(cr);
+			if (Utils.isValidId(idDeposito)) {
+				predicates.add(cb.equal(root.join("depositi", JoinType.INNER).get("idDeposito"), idDeposito)); 
+			}
+			if (Utils.isValidId(idCategoria)) {
+				predicates.add(cb.equal(root.join("categorie", JoinType.INNER).get("idCategoria"), idCategoria)); 
+			}
+			if (!Utils.isEmptyString(descrizione)) {
+				predicates.add(cb.like(cb.lower(root.<String>get("descrizione")), "%"+ descrizione.toLowerCase() +"%"));
+			}
+			cr.where(predicates.toArray(new Predicate[0]));
+			data =  em.createQuery(cr).getResultList();
 			
-			data = query.getResultList();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,24 +82,28 @@ public class ArticoliManager extends DbManagerStandard<Articoli> {
 		}
 		return data;
 	}
-	
+
 	@Override
 	public boolean checkCampiObbligatori(Articoli object) {
 		if (Utils.isEmptyString(object.getDescrizione())) {
 			logger.warn("Can't persist record 'Articoli'  invalid field 'descrizione'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {Messages.getMessage("field.descrizione")}));
+			addMessage(Messages.getMessageFormatted("field.err.mandatory",
+					new String[] { Messages.getMessage("field.descrizione") }));
 			return false;
 		}
 		return true;
 	}
+
 	@Override
 	public boolean checkObjectForInsert(Articoli object) {
 		return true;
 	}
+
 	@Override
 	public boolean checkObjectForDelete(Articoli object) {
 		return true;
 	}
+
 	@Override
 	public boolean checkObjectForUpdate(Articoli object) {
 		return true;

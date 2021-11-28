@@ -88,6 +88,11 @@ public class DepositoManager extends DbManagerStandard<Deposito> {
 	}
 	@Override
 	public boolean checkObjectForDelete(Deposito object) {
+		
+		
+		
+		
+		
 		return true;
 	}
 	@Override

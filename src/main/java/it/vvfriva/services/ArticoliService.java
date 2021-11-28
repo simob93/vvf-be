@@ -31,15 +31,18 @@ public class ArticoliService extends DbServiceStandard<Articoli> {
 	}
 	/**
 	 * 
+	 * @param idCategoria 
+	 * @param idDeposito 
+	 * @param descrizione 
 	 * @return
 	 */
-	public JsonResponse<List<Articoli>> list() {
+	public JsonResponse<List<Articoli>> list(String descrizione, Integer idDeposito, Integer idCategoria) {
 		List<Articoli> data = null;
 		String message = null;
 		Boolean success = true;
 		JsonResponse<List<Articoli>> result = null;
 		try {
-			data = this.getManager().list();
+			data = this.getManager().list(descrizione, idDeposito, idCategoria);
 			message = Messages.getMessage("search.ok");
 		} catch (Exception e) {
 			success = false;
