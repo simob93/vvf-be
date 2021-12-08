@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final utlizzo versione della libreria JasperReports5.2.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VVF_Autorizzazioni" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="72682edc-84a9-4e6c-af1a-c8dacff31d00">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="labelStandard" hAlign="Left" vAlign="Middle" fontSize="10" isBold="true"/>
+	<style name="TestoStandard" vAlign="Middle" fontSize="10">
+		<paragraph leftIndent="3"/>
+	</style>
+	<parameter name="listAutorizzazioni" class="java.util.Collection"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nome" class="java.lang.String"/>
+	<field name="cognome" class="java.lang.String"/>
+	<field name="dataDiNascita" class="java.lang.String"/>
+	<field name="indrizzo" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<pageHeader>
+		<band height="70">
+			<rectangle radius="15">
+				<reportElement x="0" y="0" width="549" height="70" uuid="6405049f-1876-4dbb-ab61-01d68d12aa48"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="labelStandard" x="20" y="7" width="40" height="20" uuid="8c8a0920-960f-4f23-ad09-b8eceba8889c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Nome:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="TestoStandard" x="60" y="7" width="90" height="20" uuid="54087bea-d283-4808-b209-5e5406f33d98">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="labelStandard" x="20" y="27" width="60" height="20" uuid="f8b116cc-db27-4256-b1f4-427bad2bac92"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Cognome:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="TestoStandard" x="80" y="27" width="90" height="20" uuid="a6519333-7980-4c94-a5e7-1967153e4ee3">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cognome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="labelStandard" x="20" y="47" width="90" height="20" uuid="6d91b281-c050-47e9-a3ee-448183dccb8e"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Data di nascita:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="TestoStandard" x="110" y="47" width="90" height="20" uuid="d44a0f80-e9ee-45cb-9dc6-b893e23fbab8">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataDiNascita}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="labelStandard" x="290" y="7" width="50" height="20" uuid="ef85c35a-1825-40fc-8c27-9229bf148dfb"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Indirizzo:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="TestoStandard" x="340" y="7" width="205" height="20" uuid="0ef8f42a-cb3c-416a-b27f-92d74f7ad0a3">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{indrizzo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="labelStandard" x="290" y="27" width="30" height="20" uuid="3c425b54-c2d9-4511-8c51-9bb57cfda040"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Tel:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="TestoStandard" x="320" y="27" width="205" height="20" uuid="944e425a-890b-4dfc-a877-090411e1d4a5">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telefono}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="labelStandard" x="290" y="47" width="40" height="20" uuid="869926af-63b5-4d9b-9211-91681f87fcb8"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Email:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="TestoStandard" x="330" y="47" width="205" height="20" uuid="089adefd-b9fb-4ea2-a5cc-a9a66c600a40">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

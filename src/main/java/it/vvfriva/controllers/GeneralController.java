@@ -14,6 +14,7 @@ import it.vvfriva.entity.Comuni;
 import it.vvfriva.entity.Provincie;
 import it.vvfriva.entity.SettingScadenze;
 import it.vvfriva.models.JsonResponse;
+import it.vvfriva.models.KeyValue;
 import it.vvfriva.services.GeneralService;
 @Controller    
 @RequestMapping(path="/general")
@@ -34,6 +35,11 @@ public class GeneralController {
 	@GetMapping(path="/comuni")
 	private @ResponseBody JsonResponse<List<Comuni>> listTown(@RequestParam(name="idCity", defaultValue = "-1") Integer istatProvincia) {
 		return generalService.listTown(istatProvincia);
+	}
+	
+	@GetMapping("/taglie")
+	private @ResponseBody JsonResponse<List<KeyValue>> listTaglie() {
+		return generalService.listTaglie();
 	}
 	
 	@GetMapping(path="/expiry/freq")

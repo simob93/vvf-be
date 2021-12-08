@@ -1,5 +1,6 @@
 package it.vvfriva.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,10 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Dotazione;
+import it.vvfriva.entity.Servizio;
 import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.DotazioneManager;
 import it.vvfriva.models.JsonResponse;
+import it.vvfriva.models.KeyValue;
 import it.vvfriva.models.KeyValueDate;
+import it.vvfriva.models.ModelDotazionePortlet;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.Utils;
 
@@ -101,6 +105,31 @@ public class DotazioneService extends DbServiceStandard<Dotazione> {
 			response = new JsonResponse<Dotazione>(success, message, null);
 		}
 		return response;
+	}
+
+	public JsonResponse<List<ModelDotazionePortlet>> listForPortlet(Integer idVigile) {
+		JsonResponse<List<ModelDotazionePortlet>> result = null;
+		Boolean success = true;
+		String message = "";
+		List<ModelDotazionePortlet> data = null;
+		try {
+			List<Dotazione> listDotazioni = this.getManager().listForPortlet(idVigile);
+			if (!Utils.isEmptyList(listDotazioni)) {
+				data = new ArrayList<ModelDotazionePortlet>();
+				for (Dotazione dotazione : listDotazioni) {
+					data.add(new ModelDotazionePortlet(dotazione.getDescrArticolo(), dotazione.getDataConsegna()));
+				}
+			}
+			message = Messages.getMessage("search.ok");
+		} catch (Exception e) {
+			message = Messages.getMessage("search.ko");
+			success = false;
+			e.printStackTrace();
+			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".listForPortlet ", e.getMessage());
+		} finally {
+			result = new JsonResponse<List<ModelDotazionePortlet>>(success, message, data);
+		}
+		return result;
 	}
 
 }

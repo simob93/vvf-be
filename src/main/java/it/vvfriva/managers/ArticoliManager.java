@@ -71,6 +71,7 @@ public class ArticoliManager extends DbManagerStandard<Articoli> {
 			if (!Utils.isEmptyString(descrizione)) {
 				predicates.add(cb.like(cb.lower(root.<String>get("descrizione")), "%"+ descrizione.toLowerCase() +"%"));
 			}
+			cr.orderBy(cb.asc(root.get("descrizione")));
 			cr.where(predicates.toArray(new Predicate[0]));
 			data =  em.createQuery(cr).getResultList();
 			

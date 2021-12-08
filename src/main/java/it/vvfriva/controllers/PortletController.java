@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import it.vvfriva.entity.Scadenze;
 import it.vvfriva.entity.Servizio;
 import it.vvfriva.models.JsonResponse;
+import it.vvfriva.models.ModelDotazionePortlet;
 import it.vvfriva.models.ModelPortletVigileCertificati;
 import it.vvfriva.models.ModelPortletVigilePatenti;
+import it.vvfriva.services.DotazioneService;
 import it.vvfriva.services.ScadenzeService;
 import it.vvfriva.services.ServizioService;
 import it.vvfriva.services.VigileCertificatiService;
@@ -34,6 +36,8 @@ public class PortletController {
 	ScadenzeService scadenzeService;
 	@Autowired
 	ServizioService servizioService;
+	@Autowired 
+	DotazioneService dotazioneService;
 	/**
 	 * 
 	 * @param idVigile
@@ -81,6 +85,15 @@ public class PortletController {
 		return scadenzeService.listAll(idVigile, dateFrom, dateTo, listArea, null);
 		
 
+	}
+	/**
+	 * 
+	 * @param idVigile
+	 * @return
+	 */
+	@GetMapping(path="/dotazione/list")
+	private @ResponseBody JsonResponse<List<ModelDotazionePortlet>> listDotazioneForPortlet(@RequestParam("idVigile") Integer idVigile) {
+		return dotazioneService.listForPortlet(idVigile);
 	}
 	
 }

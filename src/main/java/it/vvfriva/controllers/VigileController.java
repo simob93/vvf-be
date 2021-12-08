@@ -337,7 +337,7 @@ public class VigileController {
 	 * @return
 	 */
 	@GetMapping("/dotazione/delete")
-	public @ResponseBody JsonResponse<Dotazione> deleteDotazione(@PathVariable("id") Integer id) {
+	public @ResponseBody JsonResponse<Dotazione> deleteDotazione(@RequestParam("id") Integer id) {
 		return dotazioneService.delete(id);
 	}
 	
