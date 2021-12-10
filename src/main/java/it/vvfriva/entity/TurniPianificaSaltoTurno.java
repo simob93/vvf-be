@@ -9,9 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import it.vvfriva.interfaces.EntityInfo;
+
 @Entity
 @Table(name = "turni_pianifica_salto_turno")
-public class TurniPianificaSaltoTurno  implements Serializable {
+public class TurniPianificaSaltoTurno  implements Serializable, EntityInfo {
 	/**
 	 * 
 	 */

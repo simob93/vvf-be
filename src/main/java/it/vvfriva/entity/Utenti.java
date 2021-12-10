@@ -20,14 +20,16 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
  *
  */
 @Entity
-@Table
-public class Utenti implements Serializable {
+@Table(name = "utenti")
+public class Utenti implements Serializable, EntityInfo {
 
 	/**
 	 * 

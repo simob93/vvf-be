@@ -94,7 +94,7 @@ public abstract class DbServiceStandard<T> {
 		List<ResponseMessage> message = new ArrayList<>();
 		JsonResponse<T> result = null;
 		try {
-			message = this.getManager().dbManager(DbOperation.DELETE, this.getManager().getObjById(id), id);
+			message = this.getManager().dbManager(DbOperation.DELETE, this.getManager().getObjById(id));
 		}catch (CustomException ex) {
 			success = false;
 			message = ex.getErrorList();

@@ -10,19 +10,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
  *
  */
 @Entity
-public class Articoli {
+@Table(name = "articoli")
+public class Articoli implements EntityInfo {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

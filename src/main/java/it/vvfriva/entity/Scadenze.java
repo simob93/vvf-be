@@ -21,6 +21,7 @@ import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import it.vvfriva.interfaces.EntityInfo;
 import it.vvfriva.utils.Utils;
 
 /**
@@ -30,7 +31,7 @@ import it.vvfriva.utils.Utils;
  */
 @Entity
 @Table(name = "expiry")
-public class Scadenze {
+public class Scadenze implements EntityInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

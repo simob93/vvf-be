@@ -283,7 +283,7 @@ public class ServizioManager extends DbManagerStandard<Servizio> {
 				List<Gradi> listGradi = gradiManager.listBy(null, null, null, object.getId());
 				if (!Utils.isEmptyList(listGradi)) {
 					for (Gradi grado: listGradi) {
-						gradiManager.dbManager(DbOperation.DELETE, null, grado.getId());
+						gradiManager.dbManager(DbOperation.DELETE, grado.getId());
 					}
 				}
 			}

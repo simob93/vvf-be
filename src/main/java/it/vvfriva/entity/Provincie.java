@@ -7,9 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+
+import it.vvfriva.interfaces.EntityInfo;
 
 @Entity
-public class Provincie implements Serializable {
+@Table(name = "provincie")
+public class Provincie implements Serializable, EntityInfo {
 	
 	/**
 	 * 

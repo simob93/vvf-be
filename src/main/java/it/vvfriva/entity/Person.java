@@ -5,12 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import it.vvfriva.interfaces.EntityInfo;
 import it.vvfriva.utils.Utils;
 
 @Entity
-public class Person {
+@Table(name = "person")
+public class Person implements EntityInfo {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

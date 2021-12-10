@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * gestione certificati/ autorizzazioni 
  * @author simone
@@ -18,7 +20,7 @@ import org.hibernate.annotations.Formula;
  */
 @Entity
 @Table(name="vigile_certified")
-public class VigileCertificati {
+public class VigileCertificati implements EntityInfo {
 	
 	public VigileCertificati() {
 	

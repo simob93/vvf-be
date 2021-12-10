@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
@@ -15,7 +17,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "utenti_ruoli")
-public class UtentiRuoli implements Serializable {
+public class UtentiRuoli implements Serializable, EntityInfo {
 
 	/**
 	 * 

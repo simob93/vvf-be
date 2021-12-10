@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
@@ -14,7 +16,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "articoli_categorie")
-public class ArticoliCategorie {
+public class ArticoliCategorie implements EntityInfo {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -12,8 +12,11 @@ import javax.persistence.NamedStoredProcedureQueries;
 import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
@@ -31,7 +34,8 @@ import org.hibernate.annotations.Formula;
 	          type = Integer.class, 
 	          mode = ParameterMode.IN) }) 
 	})
-public class Protocol {
+@Table(name = "protocol")
+public class Protocol implements EntityInfo {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

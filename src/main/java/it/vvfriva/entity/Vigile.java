@@ -14,11 +14,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import it.vvfriva.interfaces.EntityInfo;
 import it.vvfriva.utils.Utils;
 /**
  * 
@@ -26,7 +28,8 @@ import it.vvfriva.utils.Utils;
  *
  */
 @Entity
-public class Vigile implements Serializable {
+@Table(name = "vigile")
+public class Vigile implements Serializable, EntityInfo {
 	
 	/**
 	 * 

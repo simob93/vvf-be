@@ -12,11 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Dotazione;
-import it.vvfriva.entity.Servizio;
 import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.DotazioneManager;
 import it.vvfriva.models.JsonResponse;
-import it.vvfriva.models.KeyValue;
 import it.vvfriva.models.KeyValueDate;
 import it.vvfriva.models.ModelDotazionePortlet;
 import it.vvfriva.utils.Messages;

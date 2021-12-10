@@ -7,9 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+
+import it.vvfriva.interfaces.EntityInfo;
 
 @Entity
-public class Comuni implements Serializable {
+@Table(name = "comuni")
+public class Comuni implements Serializable, EntityInfo {
 	
 	/**
 	 * 

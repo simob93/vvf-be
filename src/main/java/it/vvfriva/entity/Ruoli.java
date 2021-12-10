@@ -19,6 +19,8 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
@@ -26,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "ruoli")
-public class Ruoli {
+public class Ruoli implements EntityInfo {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)

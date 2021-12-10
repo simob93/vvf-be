@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Formula;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
@@ -19,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  */
 @Entity
 @Table(name ="serv")
-public class Servizio {
+public class Servizio implements EntityInfo {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

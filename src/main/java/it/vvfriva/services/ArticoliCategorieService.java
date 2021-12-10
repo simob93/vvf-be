@@ -80,7 +80,7 @@ public class ArticoliCategorieService extends DbServiceStandard<ArticoliCategori
 		try {
 			for (ArticoliCategorie cat: listArtCat) {
 				if ((cat.getEliminare() != null) && (cat.getEliminare().booleanValue())) {
-					this.manager.dbManager(DbOperation.DELETE, null, cat.getId());
+					this.manager.dbManager(DbOperation.DELETE, cat.getId());
 				}
 				else if (!Utils.isValidId(cat.getId())) {
 					this.manager.dbManager(DbOperation.INSERT, cat);

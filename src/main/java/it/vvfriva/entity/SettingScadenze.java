@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import it.vvfriva.interfaces.EntityInfo;
 import it.vvfriva.utils.CostantiVVF;
 import it.vvfriva.utils.Utils;
 
@@ -18,7 +19,7 @@ import it.vvfriva.utils.Utils;
  */
 @Entity
 @Table(name="setting_scadenze")
-public class SettingScadenze {
+public class SettingScadenze implements EntityInfo {
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;

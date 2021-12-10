@@ -212,7 +212,7 @@ public class PersonManager extends DbManagerStandard<Person> {
 					// verifico se precedentemente èra presente una scadenza
 					SettingScadenze settScadenza = personScadenzeManager.getByIdPerson(object.getId());
 					if (settScadenza != null) {
-						personScadenzeManager.dbManager(DbOperation.DELETE, null, settScadenza.getId());
+						personScadenzeManager.dbManager(DbOperation.DELETE, settScadenza.getId());
 					}
 				}
 			}

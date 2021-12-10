@@ -12,9 +12,11 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
+import it.vvfriva.interfaces.EntityInfo;
+
 @Entity
 @Table(name = "turni_pianifica")
-public class TurniPianifica  implements Serializable {
+public class TurniPianifica  implements Serializable, EntityInfo {
 	/**
 	 * 
 	 */

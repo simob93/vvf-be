@@ -11,18 +11,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
  *
  */
 @Entity
-public class Menu {
+@Table(name = "menu")
+public class Menu implements EntityInfo {
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;

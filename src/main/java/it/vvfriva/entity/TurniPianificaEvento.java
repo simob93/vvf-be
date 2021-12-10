@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
@@ -16,7 +18,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "turni_pianifica_evento")
-public class TurniPianificaEvento implements Serializable {
+public class TurniPianificaEvento implements Serializable, EntityInfo {
 	
 	private static final long serialVersionUID = 4708490867771786894L;
 	

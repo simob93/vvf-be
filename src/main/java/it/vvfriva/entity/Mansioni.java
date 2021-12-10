@@ -7,15 +7,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
  *
  */
 @Entity
-public class Mansioni {
+@Table(name = "mansioni")
+public class Mansioni implements EntityInfo {
 
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -14,6 +14,8 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import it.vvfriva.interfaces.EntityInfo;
+
 /**
  * 
  * @author simone
@@ -21,7 +23,7 @@ import org.hibernate.annotations.NotFoundAction;
  */
 @Entity
 @Table(name = "ruoli_permessi")
-public class RuoliPermessi {
+public class RuoliPermessi implements EntityInfo {
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;

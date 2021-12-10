@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
+
+import it.vvfriva.interfaces.EntityInfo;
 /**
  * 
  * @author simone
@@ -19,7 +21,7 @@ import org.hibernate.annotations.Formula;
  */
 @Table(name = "vigile_dotazione")
 @Entity
-public class Dotazione {
+public class Dotazione implements EntityInfo {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
