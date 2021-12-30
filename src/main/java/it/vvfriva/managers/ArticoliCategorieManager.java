@@ -13,32 +13,25 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.ArticoliCategorie;
 import it.vvfriva.repository.ArticoliCategorieRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * @author simone
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ArticoliCategorieManager extends DbManagerStandard<ArticoliCategorie> {
 
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired ArticoliCategorieRepository repository;
 	@Autowired EntityManager em;
-	
-	@Override
-	public CrudRepository<ArticoliCategorie, Integer> getRepository() {
-		return repository;
-	}
 	
 	/**
 	 * Ritorna tutti gli articoli 
@@ -78,31 +71,23 @@ public class ArticoliCategorieManager extends DbManagerStandard<ArticoliCategori
 		}
 		return data;
 	}
-	
+
+
 	@Override
-	public boolean checkCampiObbligatori(ArticoliCategorie object) {
+	public boolean controllaCampiObbligatori(ArticoliCategorie object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		if (!Utils.isValidId(object.getIdArticolo())) {
 			logger.warn("Can't persist record 'ArticoliCategorie'  invalid field 'idArticolo'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {Messages.getMessage("field.idarticolo")}));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory",
+					new String[] { Messages.getMessage("field.idarticolo") })));
 			return false;
 		}
 		if (!Utils.isValidId(object.getIdCategoria())) {
 			logger.warn("Can't persist record 'ArticoliCategorie'  invalid field 'idCategoria'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {Messages.getMessage("field.idcategoria")}));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory",
+					new String[] { Messages.getMessage("field.idcategoria") })));
 			return false;
 		}
-		return true;
-	}
-	@Override
-	public boolean checkObjectForInsert(ArticoliCategorie object) {
-		return true;
-	}
-	@Override
-	public boolean checkObjectForDelete(ArticoliCategorie object) {
-		return true;
-	}
-	@Override
-	public boolean checkObjectForUpdate(ArticoliCategorie object) {
 		return true;
 	}
 }

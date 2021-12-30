@@ -6,8 +6,8 @@ package it.vvfriva.utils;
  */
 public class ResponseMessage {
 	
-	public static final Integer MSG_TYPE_SILENCE = 0; //mesaggio silenzioso trapsarente alla gui
-	public static final Integer MSG_TYPE_LOUD = 1; //viene mostrato popup
+	public static final Integer NESSUNO = 0; //mesaggio silenzioso trapsarente alla gui
+	public static final Integer ERRORE = 1; //viene mostrato popup
 	
 	private Integer type;
 	private String testo;
@@ -22,7 +22,7 @@ public class ResponseMessage {
 	}
 	
 	public ResponseMessage(String testo) {
-		this.type = MSG_TYPE_SILENCE;
+		this.type = NESSUNO;
 		this.testo = testo;
 	}
 	public Integer getType() {

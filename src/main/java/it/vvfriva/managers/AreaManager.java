@@ -13,12 +13,13 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Area;
 import it.vvfriva.repository.AreaRepository;
 import it.vvfriva.utils.CostantiVVF;
+import it.vvfriva.utils.CustomException;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * Manager per la gestione delle aree.
@@ -89,29 +90,8 @@ public class AreaManager extends DbManagerStandard<Area> {
 		}	
 		return data;
 	}
-
 	@Override
-	public CrudRepository<Area, Integer> getRepository() {
-		return repository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(Area object) {
+	public boolean controllaCampiObbligatori(Area object, List<ResponseMessage> msg) throws CustomException, Exception {
 		return false;
 	}
-
-	@Override
-	public boolean checkObjectForInsert(Area object) {
-		return false;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Area object) {
-		return false;
-	}
-	@Override
-	public boolean checkObjectForDelete(Area object) {
-		return true;
-	}
-
 }

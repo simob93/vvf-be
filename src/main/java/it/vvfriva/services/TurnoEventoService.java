@@ -20,7 +20,6 @@ import it.vvfriva.entity.TurniPianifica;
 import it.vvfriva.entity.TurniPianificaEvento;
 import it.vvfriva.entity.TurniPianificaSaltoTurno;
 import it.vvfriva.entity.Vigile;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.enums.EnumsTurni;
 import it.vvfriva.managers.GradiManager;
 import it.vvfriva.managers.PersonManager;
@@ -123,12 +122,12 @@ public class TurnoEventoService {
 					pianificazione.setDal(weekDal);
 					pianificazione.setAl(weekAl);
 					pianificazione.setIdSquadra(squadra.getId());
-					this.turniPianificaManager.dbManager(DbOperation.INSERT, pianificazione);
+					this.turniPianificaManager.save(pianificazione);
 					
 				} else if (squadra.getId().compareTo(pianificazione.getIdSquadra()) != 0) {
 					// caso squadre nuove
 					pianificazione.setIdSquadra(squadra.getId());
-					this.turniPianificaManager.dbManager(DbOperation.UPDATE, pianificazione);
+					this.turniPianificaManager.update(pianificazione);
 				}
 				this.turniPianificaEventoManager.deleteTurniByPianificazione(pianificazione.getId());
 				this.turniPianificaSaltoTurnoManager.deleteByIdPianificazione(pianificazione.getId());
@@ -238,14 +237,14 @@ public class TurnoEventoService {
 						turno.setIdTurno(giornoSettimana);
 						turno.setData(dataTurno);
 						turno.setIdPianificazione(pianificazione.getId());
-						this.turniPianificaEventoManager.dbManager(DbOperation.INSERT, turno);
+						this.turniPianificaEventoManager.save(turno);
 
 					} else {
 						
 						TurniPianificaSaltoTurno salto = new TurniPianificaSaltoTurno();
 						salto.setIdPianificazione(pianificazione.getId());
 						salto.setIdVigile(vigile.getId());
-						this.turniPianificaSaltoTurnoManager.dbManager(DbOperation.INSERT, salto);
+						this.turniPianificaSaltoTurnoManager.save(salto);
 						turnoModel.setSaltoTurno(true);
 					}
 					data.add(turnoModel);

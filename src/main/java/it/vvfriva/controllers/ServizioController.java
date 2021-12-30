@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Servizio;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.services.ServizioService;
 
@@ -34,13 +33,13 @@ public class ServizioController {
 	
 	@PostMapping(path="/new")
 	public @ResponseBody JsonResponse<Servizio> save(@RequestBody Servizio servizio) {
-		return servizioService.saveOrUpdate(servizio, DbOperation.INSERT);
+		return servizioService.save(servizio);
 		
 	}
 	
 	@PostMapping(path="/update")
 	public @ResponseBody JsonResponse<Servizio> update(@RequestBody Servizio servizio) {
-		return servizioService.saveOrUpdate(servizio, DbOperation.UPDATE);
+		return servizioService.update(servizio);
 		
 	}
 	@GetMapping(path="/delete")

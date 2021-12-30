@@ -15,12 +15,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.TurniPianifica;
 import it.vvfriva.repository.TurniPianificaRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * Manager della vera e propria gestesione dei turni 
@@ -197,30 +198,6 @@ public class TurniPianificaManager extends DbManagerStandard<TurniPianifica>  {
 		return result;
 	}
 	
-	@Override
-	public CrudRepository<TurniPianifica, Integer> getRepository() {
-		return turniPianificaRepository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(TurniPianifica object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(TurniPianifica object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(TurniPianifica object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForDelete(TurniPianifica object) {
-		return true;
-	}
 	/**
 	 * 
 	 * @param weekDal
@@ -253,6 +230,13 @@ public class TurniPianificaManager extends DbManagerStandard<TurniPianifica>  {
 			throw new Exception(Messages.getMessage("search.ko"));
 		}
 		return result;
+	}
+
+
+	@Override
+	public boolean controllaCampiObbligatori(TurniPianifica object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
+		return true;
 	}
 
 }

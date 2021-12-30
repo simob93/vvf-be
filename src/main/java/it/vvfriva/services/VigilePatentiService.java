@@ -77,10 +77,13 @@ public class VigilePatentiService extends DbServiceStandard<VigilePatenti> {
 			for (VigilePatenti vigilePatente: vigilePatenti) {
 				if (!Utils.isValidId(vigilePatente.getId())) {
 					vigilePatente.setId(null);
+					vigilePatentiManager.save(vigilePatente);
+				} else {
+					vigilePatentiManager.update(vigilePatente);
 				}
-				vigilePatentiManager.dbManager(action, vigilePatente);
+				
 			}
-			message.add(new ResponseMessage(ResponseMessage.MSG_TYPE_LOUD, Messages.getMessage("operation.ok")));
+			message.add(new ResponseMessage(ResponseMessage.ERRORE, Messages.getMessage("operation.ok")));
 			
 		}catch (CustomException ex) {
 			success = false;
@@ -90,7 +93,7 @@ public class VigilePatentiService extends DbServiceStandard<VigilePatenti> {
 			ex.printStackTrace();
 		} catch (Exception e) {
 			success = false;
-			message.add(new ResponseMessage(ResponseMessage.MSG_TYPE_LOUD, e.getMessage()));
+			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
 			e.printStackTrace();
 			logger.error("Excepetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
 			e.printStackTrace();

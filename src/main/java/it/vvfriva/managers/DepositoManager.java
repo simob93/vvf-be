@@ -13,32 +13,25 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Deposito;
 import it.vvfriva.repository.DepositoRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * @author simone
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class DepositoManager extends DbManagerStandard<Deposito> {
 
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired DepositoRepository repository;
 	@Autowired EntityManager em;
-	
-	@Override
-	public CrudRepository<Deposito, Integer> getRepository() {
-		return repository;
-	}
 	
 	/**
 	 * Ritorna tutti i depositi 
@@ -72,31 +65,16 @@ public class DepositoManager extends DbManagerStandard<Deposito> {
 		}
 		return data;
 	}
-	
+
+
 	@Override
-	public boolean checkCampiObbligatori(Deposito object) {
+	public boolean controllaCampiObbligatori(Deposito object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		if (Utils.isEmptyString(object.getDescrizione())) {
 			logger.warn("Can't persist record 'Deposito'  invalid field 'descrizione'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {Messages.getMessage("field.descrizione")}));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {Messages.getMessage("field.descrizione")})));
 			return false;
 		}
-		return true;
-	}
-	@Override
-	public boolean checkObjectForInsert(Deposito object) {
-		return true;
-	}
-	@Override
-	public boolean checkObjectForDelete(Deposito object) {
-		
-		
-		
-		
-		
-		return true;
-	}
-	@Override
-	public boolean checkObjectForUpdate(Deposito object) {
 		return true;
 	}
 }

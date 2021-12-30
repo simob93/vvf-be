@@ -18,14 +18,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Vigile;
 import it.vvfriva.models.ModelInfoVigili;
 import it.vvfriva.models.VigileModel;
 import it.vvfriva.repository.VigileRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 @Service
@@ -208,43 +209,27 @@ public class VigileManager extends DbManagerStandard<Vigile> {
 		}
 		return data;
 	}
+	
 	@Override
-	public CrudRepository<Vigile, Integer> getRepository() {
-		return repository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(Vigile object) {
+	public boolean controllaCampiObbligatori(Vigile object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 
 		if (Utils.isEmptyString(object.getFirstName())) {
 			logger.error("Can't persist record invalid field 'first name'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "nome" }));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "nome" })));
 			return false;
 		}
 		if (Utils.isEmptyString(object.getLastName())) {
 			logger.error("Can't persist record invalid field 'last name'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "cognome" }));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "cognome" })));
 			return false;
 		}
 		/* compongo la lista delle patenti splittata con il ";" */
 		if (!Utils.isEmptyList(object.getListDrivingLicenses())) {
 			object.setDrivingLicenses(Utils.implodeList(object.getListDrivingLicenses()));
 		}
-
 		return true;
 	}
-
-	@Override
-	public boolean checkObjectForInsert(Vigile object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Vigile object) {
-		return true;
-	}
-	@Override
-	public boolean checkObjectForDelete(Vigile object) {
-		return true;
-	}
+	
+	
 }

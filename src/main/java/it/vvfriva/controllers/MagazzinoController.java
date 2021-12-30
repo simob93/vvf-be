@@ -16,7 +16,6 @@ import it.vvfriva.entity.ArticoliCategorie;
 import it.vvfriva.entity.ArticoliDepositi;
 import it.vvfriva.entity.Categorie;
 import it.vvfriva.entity.Deposito;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.services.ArticoliCategorieService;
 import it.vvfriva.services.ArticoliDepositiService;
@@ -53,7 +52,7 @@ public class MagazzinoController {
 	 */
 	@PostMapping(path = "/deposito/update")
 	public @ResponseBody JsonResponse<Deposito> updateDeposito(@RequestBody Deposito deposito) {
-		return depService.saveOrUpdate(deposito, DbOperation.UPDATE);
+		return depService.update(deposito);
 	}
 	/**
 	 * 
@@ -62,7 +61,7 @@ public class MagazzinoController {
 	 */
 	@PostMapping(path = "/deposito/new")
 	public @ResponseBody JsonResponse<Deposito> insertDeposito(@RequestBody Deposito deposito) {
-		return depService.saveOrUpdate(deposito, DbOperation.INSERT);
+		return depService.save(deposito);
 	}
 	/**
 	 * 
@@ -107,7 +106,7 @@ public class MagazzinoController {
 	 */
 	@PostMapping("/articoli/new")
 	public @ResponseBody JsonResponse<Articoli> insertArticolo(@RequestBody Articoli articolo) {
-		return articoliService.saveOrUpdate(articolo, DbOperation.INSERT);
+		return articoliService.save(articolo);
 	}
 	/**
 	 * 
@@ -116,7 +115,7 @@ public class MagazzinoController {
 	 */
 	@PostMapping("/articoli/update")
 	public @ResponseBody JsonResponse<Articoli> updateArticolo(@RequestBody Articoli articolo) {
-		return articoliService.saveOrUpdate(articolo, DbOperation.UPDATE);
+		return articoliService.update(articolo);
 	}
 	/**
 	 * 
@@ -164,7 +163,7 @@ public class MagazzinoController {
 	 */
 	@PostMapping("/articoli/categorie/update")
 	public @ResponseBody JsonResponse<ArticoliCategorie> updateArticoloCategoria(@RequestBody ArticoliCategorie artCat) {
-		return articoliCatService.saveOrUpdate(artCat, DbOperation.UPDATE);
+		return articoliCatService.update(artCat);
 	}
 	/**
 	 * 
@@ -226,7 +225,7 @@ public class MagazzinoController {
 	 */
 	@PostMapping("/categorie/new")
 	public @ResponseBody JsonResponse<Categorie> insertCategoria(@RequestBody Categorie categoria) {
-		return catService.saveOrUpdate(categoria, DbOperation.INSERT);
+		return catService.save(categoria);
 	}
 	/**
 	 * 
@@ -235,7 +234,7 @@ public class MagazzinoController {
 	 */
 	@PostMapping("/categorie/update")
 	public @ResponseBody JsonResponse<Categorie> updateCategoria(@RequestBody Categorie categoria) {
-		return catService.saveOrUpdate(categoria, DbOperation.UPDATE);
+		return catService.update(categoria);
 	}
 	/**
 	 * 

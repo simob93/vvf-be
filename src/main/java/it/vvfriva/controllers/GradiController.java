@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Gradi;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.services.GradiService;
 
@@ -41,7 +40,7 @@ public class GradiController {
 	 */
 	@PostMapping(path = "/new")
 	public @ResponseBody JsonResponse<Gradi> save(@RequestBody Gradi grado) {
-		return gradiService.saveOrUpdate(grado, DbOperation.INSERT);
+		return gradiService.save(grado);
 	}
 
 	/**
@@ -51,7 +50,7 @@ public class GradiController {
 	 */
 	@PostMapping(path = "/update")
 	public @ResponseBody JsonResponse<Gradi> update(@RequestBody Gradi grado) {
-		return gradiService.saveOrUpdate(grado, DbOperation.INSERT);
+		return gradiService.update(grado);
 	}
 
 	/**

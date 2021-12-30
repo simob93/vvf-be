@@ -26,9 +26,9 @@ public class JsonResponse<T> {
 	private List<ResponseMessage> createArrayMsg(String msg) {
 		List<ResponseMessage> list = new ArrayList<ResponseMessage>();
 		if (success == false) {
-			list.add(new ResponseMessage(ResponseMessage.MSG_TYPE_LOUD, msg));
+			list.add(new ResponseMessage(ResponseMessage.ERRORE, msg));
 		} else {
-			list.add(new ResponseMessage(ResponseMessage.MSG_TYPE_SILENCE, msg));
+			list.add(new ResponseMessage(ResponseMessage.NESSUNO, msg));
 		}
 		return list;
 	}

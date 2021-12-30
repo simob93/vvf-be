@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Protocol;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.models.JsonResponseTotal;
 import it.vvfriva.services.ProtocolService;
@@ -51,12 +50,12 @@ public class ProtocolController {
 	
 	@PostMapping(path = "/new")
 	public @ResponseBody JsonResponse<Protocol> save(@RequestBody Protocol object) {
-		return protocolService.saveOrUpdate(object, DbOperation.INSERT);
+		return protocolService.save(object);
 	}
 	
 	@PostMapping(path = "/update")
 	public @ResponseBody JsonResponse<Protocol> update(@RequestBody Protocol object) {
-		return protocolService.saveOrUpdate(object, DbOperation.UPDATE);
+		return protocolService.update(object);
 	}
 	
 	@GetMapping(path = "/{id}/delete")

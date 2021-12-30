@@ -12,12 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.SettingScadenze;
 import it.vvfriva.repository.PersonScadenzeRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 @Service
@@ -82,30 +83,13 @@ public class PersonScadenzeManager extends DbManagerStandard<SettingScadenze> {
 		}
 		return !Utils.isEmptyList(data) ? data.get(0) : null;
 	}
+
+
+	@Override
+	public boolean controllaCampiObbligatori(SettingScadenze object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
+		return true;
+	}
 	
-	@Override
-	public CrudRepository<SettingScadenze, Integer> getRepository() {
-		return repository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(SettingScadenze object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(SettingScadenze object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(SettingScadenze object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForDelete(SettingScadenze object) {
-		return true;
-	}
 
 }

@@ -9,148 +9,84 @@ import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.vvfriva.enums.DbOperation;
 import it.vvfriva.enums.EnumsChiaviEsterne;
 import it.vvfriva.enums.EnumsChiaviEsterneAction;
 import it.vvfriva.interfaces.EntityInfo;
-import it.vvfriva.repository.DbManagerStandardInt;
+import it.vvfriva.interfaces.IDBManagerOperation;
 import it.vvfriva.utils.CustomException;
-import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 @Service
-@org.springframework.transaction.annotation.Transactional(rollbackFor = Exception.class)
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public abstract class DbManagerStandard<T> implements DbManagerStandardInt<T>   {
+@Transactional(rollbackFor = Exception.class)
+public abstract class DbManagerStandard<T>  implements IDBManagerOperation<T> {
+	
 	
 	@Autowired EntityManager em;
+	@Autowired CrudRepository<T, Integer> repository;
 	
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	
-	private List<ResponseMessage> message;
-	
-	public abstract boolean checkCampiObbligatori(T object);
-	public abstract boolean checkObjectForInsert(T object);
-	public abstract boolean checkObjectForDelete(T object);
-	public abstract boolean checkObjectForUpdate(T object);
-	/**
-	 * 
-	 * @param action
-	 * @param object
-	 * @return
-	 */
-	public boolean beforeDbAction(DbOperation action , T object) {
-		return true;
-	}
-	/**
-	 * 
-	 * @param action
-	 * @param object
-	 * @return
-	 */
-	public boolean afterDbAction(DbOperation action , T object) {
-		return true;
-	}
-	
 	public T getObjById(Integer id) {
-		return (T) getRepository().findById(id).get();
+		return (T) repository.findById(id).get();
 	}
 	/**
 	 * 
-	 * @param action
 	 * @param object
-	 * @return
-	 * @throws Exception
+	 * @throws Exception 
 	 */
-	public List<ResponseMessage> dbManager(DbOperation action, Integer id) throws CustomException {
-		return dbManager(action, getObjById(id));
+	@Transactional
+	public void save(T object) throws Exception, CustomException {
+		List<ResponseMessage> msg = new ArrayList<ResponseMessage>();
+		boolean puoiProcedere = controllaCampiObbligatori(object, msg);
+		if (!puoiProcedere) {
+			throw new CustomException(msg);
+		}
+		operazionePrimaDiInserire(object);
+		repository.save(object);
+		operazioneDopoInserimento(object);
 	}
 	/**
 	 * 
-	 * @param action
 	 * @param object
-	 * @param id
-	 * @return
-	 * @throws CustomException
+	 * @throws Exception 
 	 */
-	public List<ResponseMessage> dbManager(DbOperation action, T object) throws CustomException {
-		
-		boolean result = isValidObject(action, object);
-		if (result == false) {
-			logger.error("Exception in function: "+ this.getClass().getCanonicalName() + ".dbManager invalid object");
-			throw new CustomException(getMessage());
+	@Transactional
+	public void update(T object) throws Exception, CustomException {
+		List<ResponseMessage> msg = new ArrayList<ResponseMessage>();
+		boolean puoiProcedere = controllaCampiObbligatori(object, msg);
+		if (!puoiProcedere) {
+			throw new CustomException(msg);
 		}
-		try {
-			result = beforeDbAction(action, object);
-			if (!result) {
-				throw new CustomException(getMessage());
-			}
-			switch (action) {
-			case INSERT:
-			case UPDATE:
-				if (result) {
-					getRepository().save(object);
-				} 
-				break;
-			case DELETE:
-				getRepository().delete(object);
-				break;
-			default:
-				break;
-			}
-			result = afterDbAction(action, object);
-			if (!result) {
-				throw new CustomException(getMessage());
-			}
-			addMessage(Messages.getMessage("operation.ok"));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			addMessage(e.getMessage());
-			throw new CustomException(getMessage());
+		puoiProcedere = controllaIntegritaReferenziale(object, DbOperation.UPDATE, msg);
+		if (!puoiProcedere) {
+			throw new CustomException(msg);
 		}
-		return getMessage();
+		operazionePrimaDiModificare(object);
+		repository.save(object);
+		operazioneDopoModifica(object);
 	}
 	/**
 	 * 
-	 * @param action
 	 * @param object
-	 * @return
+	 * @throws Exception 
 	 */
-	private boolean isValidObject(DbOperation action, T object) {
-		
-		boolean result = true;
-		switch (action) {
-		case INSERT:
-			result = checkCampiObbligatori(object);
-			if (result) {
-				result = checkObjectForInsert(object);
-			}
-			break;
-		case UPDATE:
-			result = checkCampiObbligatori(object);
-			if (result) {
-				result = checkObjectForUpdate(object);
-			}
-			break;
-		case DELETE:
-			result &= checkObjectForDelete(object);
-			result &= checkReferentialIntegrity(object, action);
-			
-		default:
-			break;
+	@Transactional
+	public void delete(T object) throws Exception, CustomException {
+		List<ResponseMessage> msg = new ArrayList<ResponseMessage>();
+		boolean puoiProcedere = false;
+		puoiProcedere = controllaIntegritaReferenziale(object, DbOperation.DELETE, msg);
+		if (!puoiProcedere) {
+			throw new CustomException(msg);
 		}
-		if (result == false && Utils.isEmptyList(getMessage())) {
-			addMessage(Messages.getMessage("object.ko"));
-		}
-		
-		return result;
+		operazionePrimaDiCancellare(object);
+		repository.delete(object);
+		operazioneDopoCancellazione(object);
 	}
 	/**
 	 * 
@@ -158,7 +94,7 @@ public abstract class DbManagerStandard<T> implements DbManagerStandardInt<T>   
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private boolean checkReferentialIntegrity(T object, DbOperation action) {
+	private boolean controllaIntegritaReferenziale(T object, DbOperation action, List<ResponseMessage> msg) {
 		boolean canDo = true;
 		try {
 			if (object == null) {
@@ -198,7 +134,6 @@ public abstract class DbManagerStandard<T> implements DbManagerStandardInt<T>   
 										}
 									}
 									if (!canDo) {
-										addMessage(tabella.getMessage());
 										break;
 									}
 								}
@@ -214,22 +149,4 @@ public abstract class DbManagerStandard<T> implements DbManagerStandardInt<T>   
 		}
 		return canDo;
 	}
-	public List<ResponseMessage> getMessage() {
-		return message;
-	}
-	public void setMessage(List<ResponseMessage> message) {
-		this.message = message;
-	}
-	
-	public void addMessage(String message) {
-		addMessage(message, ResponseMessage.MSG_TYPE_LOUD);
-	}
-	
-	public void addMessage(String message, Integer type) {
-		if (Utils.isEmptyList(this.message)) {
-			this.message  = new ArrayList<ResponseMessage>();
-		}
-		this.message.add(new ResponseMessage(type, message));
-	}
-
 }

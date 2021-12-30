@@ -88,6 +88,10 @@ public class Vigile implements Serializable, EntityInfo {
 	@Column(name="mail_4")
 	private String mail4;
 	
+	@Column(name="foto")
+	private String foto;
+	
+	
 	@Transient
 	private List<String> extra_mail;
 	
@@ -470,5 +474,19 @@ public class Vigile implements Serializable, EntityInfo {
 			phones.add(this.phone4);
 		}
 		return phones;
+	}
+
+	/**
+	 * @return the foto
+	 */
+	public String getFoto() {
+		return foto;
+	}
+
+	/**
+	 * @param foto the foto to set
+	 */
+	public void setFoto(String foto) {
+		this.foto = foto;
 	}
 }

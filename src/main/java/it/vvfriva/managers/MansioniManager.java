@@ -13,15 +13,12 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Mansioni;
-import it.vvfriva.repository.MansioniRepository;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * Manager per la gestione delle mansioni dei vigili all'interno del Corpo 
@@ -30,21 +27,13 @@ import it.vvfriva.utils.Utils;
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MansioniManager extends DbManagerStandard<Mansioni> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MansioniManager.class);
 
 	@Autowired 
-	private EntityManager em;	
+	private EntityManager em;
 	
-	@Autowired 
-	private MansioniRepository carrieraRepository;
-	
-	@Override
-	public CrudRepository<Mansioni, Integer> getRepository() {
-		return carrieraRepository;
-	}
 	/**
 	 * 
 	 * @param idVigile
@@ -104,38 +93,21 @@ public class MansioniManager extends DbManagerStandard<Mansioni> {
 		}
 		return data;
 	}
-	
 
 	@Override
-	public boolean checkCampiObbligatori(Mansioni object) {
-		
+	public boolean controllaCampiObbligatori(Mansioni object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		if (!Utils.isValidDate(object.getDal())) {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid filed data dal");
-			addMessage("Campo data dal obbligatorio");
+			msg.add(new ResponseMessage("Campo data dal obbligatorio"));
 			return false;
 		}
 		
 		if (!Utils.isValidId(object.getTipo())) {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid filed id");
-			addMessage("Campo tipo obbligatorio");
+			msg.add(new ResponseMessage("Campo tipo obbligatorio"));
 			return false;
 		}
 		return true;
 	}
-
-	@Override
-	public boolean checkObjectForInsert(Mansioni object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Mansioni object) {
-		return true;
-	}
-	
-	@Override
-	public boolean checkObjectForDelete(Mansioni object) {
-		return true;
-	}
-
 }

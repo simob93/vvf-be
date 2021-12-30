@@ -10,22 +10,18 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Gradi;
 import it.vvfriva.entity.Servizio;
-import it.vvfriva.enums.DbOperation;
-import it.vvfriva.repository.GradiRepository;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * Manager per la gestione dei gradi vigili
@@ -38,22 +34,13 @@ public class GradiManager extends DbManagerStandard<Gradi> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GradiManager.class);
 
-	private @Autowired AutowireCapableBeanFactory beanFactory;
 	
 	@Autowired 
 	private EntityManager em;	
 	
-	@Autowired 
-	private GradiRepository gradiRepository;
-	
 	@Autowired
 	private ServizioManager servizioManager;
 	
-	public GradiManager getNewInstance() {
-		GradiManager scandezeManager = new GradiManager();
-		beanFactory.autowireBean(scandezeManager);
-		return scandezeManager;
-	}
 	/**
 	 * 
 	 * @param idVigile     - identificativo del vigile
@@ -139,38 +126,31 @@ public class GradiManager extends DbManagerStandard<Gradi> {
 		}
 		return data;
 	}
-	
 
 	@Override
-	public boolean checkCampiObbligatori(Gradi object) {
-		
+	public boolean controllaCampiObbligatori(Gradi object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		if (!Utils.isValidDate(object.getDal())) {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid filed data dal");
-			addMessage("Campo data dal obbligatorio");
+			msg.add(new ResponseMessage("Campo data dal obbligatorio"));
 			return false;
 		}
 		
 		if (!Utils.isValidId(object.getGrado())) {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid grado");
-			addMessage("Campo grado obbligatorio");
+			msg.add(new ResponseMessage("Campo grado obbligatorio"));
 			return false;
 		}
 		
 		if (!Utils.isValidId(object.getIdServizio())) {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid motivo idServizio");
-			addMessage("Campo id Servizio obbligatorio");
+			msg.add(new ResponseMessage("Campo id Servizio obbligatorio"));
 			return false;
 		}
 		try {
-//			List<Gradi> listGradi = this.listBy(object.getIdVigile(), object.getDal(), object.getAl(), object.getId(), object.getIdServizio());
-//			if (!Utils.isEmptyList(listGradi)) {
-//				addMessage("è gia presente un grado per il periodo impostato");
-//				return false;
-//			}
-			//controllo che le date facciano parte del servizio
 			Servizio servizio = servizioManager.getObjById(object.getIdServizio());
 			if (servizio == null) {
-				addMessage("Nessun servizio attivo");
+				msg.add(new ResponseMessage("Nessun servizio attivo"));
 				return false;
 			}
 			Date dataInizioServizio = Utils.startOfDay(servizio.getDateStart());
@@ -180,68 +160,26 @@ public class GradiManager extends DbManagerStandard<Gradi> {
 			
 			//la data di inizio servizio deve essere minore rispetto o uguale alla data di inzio grado
 			if (dataInizioServizio.compareTo(dataInizioGrado) > 0) {
-				addMessage("La data di inizio servizio deve essere minore della data di inizio del grado");
+				msg.add(new ResponseMessage("La data di inizio servizio deve essere minore della data di inizio del grado"));
 				return false;
 			}
 			if ( (dataFineServzio != null) &&
 					(dataFineGrado != null) &&
 						(dataFineServzio.compareTo(dataFineGrado) < 0)) {
-				addMessage("La data di fine servizio deve essere maggiore della data di fine del grado");
+				msg.add(new ResponseMessage("La data di fine servizio deve essere maggiore della data di fine del grado"));
 				return false;
 			}
 			
 			if (dataFineServzio != null && dataFineGrado == null) {
-				addMessage("Data fine Grado obbligatoria il servizio del vigile risulta chiuso ");
+				msg.add(new ResponseMessage("Data fine Grado obbligatoria il servizio del vigile risulta chiuso "));
 				return false;
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			addMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("search.ko"));
-			return false;
-		}
-		
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(Gradi object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Gradi object) {
-		return true;
-	}
-
-	@Override
-	public CrudRepository<Gradi, Integer> getRepository() {
-		return gradiRepository;
-	}
-
-	@Override
-	public boolean beforeDbAction(DbOperation action, Gradi object) {
-		try {
-			if (action == DbOperation.INSERT) {
-				// cerco l'ultimo grado attivo 
-				Gradi ultimoGrado = getLastActiveGrado(object.getIdServizio(), new Date());
-				if (ultimoGrado != null && !Utils.isValidDate(ultimoGrado.getAl())) {
-					ultimoGrado.setAl(new LocalDateTime(object.getDal()).minusMinutes(1).toDate());
-					this.getNewInstance().dbManager(DbOperation.UPDATE, ultimoGrado);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			addMessage(e.getMessage() != null ? Messages.getMessage("operation.ko") : e.getMessage());
+			msg.add(new ResponseMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("search.ko")));
 			return false;
 		}
 		return true;
-		
 	}
-	
-	@Override
-	public boolean checkObjectForDelete(Gradi object) {
-		return true;
-	}
-
 }

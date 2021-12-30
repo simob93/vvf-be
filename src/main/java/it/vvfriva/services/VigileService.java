@@ -2,6 +2,7 @@ package it.vvfriva.services;
 
 import java.util.List;
 
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +128,32 @@ public class VigileService extends DbServiceStandard<Vigile> {
 	@Override
 	public DbManagerStandard<Vigile> getManager() {
 		return vigileManager;
+	}
+	/**
+	 * 
+	 * @param idVigile
+	 * @param base64
+	 * @return
+	 */
+	public JsonResponse<Vigile> uploadFoto(Integer idVigile, String base64) {
+		Boolean success = true;
+		String message = null;
+		JsonResponse<Vigile> resp = null;
+		Vigile data = null;
+		try {
+			data = this.getManager().getObjById(idVigile);
+			data.setFoto(base64);
+			this.getManager().update(data);
+			message = Messages.getMessage("operation.ok");
+		} catch (Exception e) {
+			success = false;
+			message = Messages.getMessage("operation.ko");
+			Log.error("Exception in Method: " + this.getClass().getCanonicalName() + ".uploadFoto", e);
+			e.printStackTrace();
+		} finally {
+			resp = new JsonResponse<Vigile>(success, message, data);
+		}
+		return resp;
 	}
 
 

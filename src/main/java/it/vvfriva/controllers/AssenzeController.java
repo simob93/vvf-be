@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Assenze;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.services.AssenzeService;
 import it.vvfriva.types.SimpleDate;
@@ -50,7 +49,7 @@ public class AssenzeController {
 	 */
 	@PostMapping(path = "/new")
 	public @ResponseBody JsonResponse<Assenze> save(@RequestBody Assenze assenza) {
-		return assenzeService.saveOrUpdate(assenza, DbOperation.INSERT);
+		return assenzeService.save(assenza);
 	}
 
 	/**
@@ -60,7 +59,7 @@ public class AssenzeController {
 	 */
 	@PostMapping(path = "/update")
 	public @ResponseBody JsonResponse<Assenze> update(@RequestBody Assenze assenza) {
-		return assenzeService.saveOrUpdate(assenza, DbOperation.INSERT);
+		return assenzeService.update(assenza);
 	}
 
 	/**

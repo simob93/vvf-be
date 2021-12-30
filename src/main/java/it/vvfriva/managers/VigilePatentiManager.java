@@ -14,17 +14,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.VigilePatenti;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.KeyValueTipiScadenza;
 import it.vvfriva.models.ModelPortletVigilePatenti;
 import it.vvfriva.repository.VigilePatentiRepository;
 import it.vvfriva.utils.CostantiVVF;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 @Service
@@ -42,10 +41,6 @@ public class VigilePatentiManager extends DbManagerStandard<VigilePatenti> {
 	@Autowired
 	ScadenzeManager scadenzeManager;
 
-	@Override
-	public CrudRepository<VigilePatenti, Integer> getRepository() {
-		return repository;
-	}
 	/**
 	 * ritorna la lista delle patenti filtrata per idVigile
 	 * 
@@ -184,24 +179,26 @@ public class VigilePatentiManager extends DbManagerStandard<VigilePatenti> {
 	}
 
 	@Override
-	public boolean checkCampiObbligatori(VigilePatenti object) {
+	public boolean controllaCampiObbligatori(VigilePatenti object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		/*
 		 * sono neccessari al fine di un insermiento ok! i campi numero patente
 		 * solitamente alfanumerico data di svolgimento patente e tipologia di patete
 		 */
 		if (Utils.isEmptyString(object.getNumber())) {
 			log.warn("Can't persist record invalid field number");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "numero patente" }));
+			
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "numero patente" })));
 			return false;
 		}
 		if (!Utils.isValidDate(object.getDate())) {
 			log.warn("Can't persist record invalid field date");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "Data di inizio" }));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "Data di inizio" })));
 			return false;
 		}
 		if (!Utils.isValidId(object.getIdPerson())) {
 			log.warn("Can't persist record invalid field id person");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "Tipo patente" }));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "Tipo patente" })));
 			return false;
 		}
 
@@ -209,50 +206,24 @@ public class VigilePatentiManager extends DbManagerStandard<VigilePatenti> {
 		try {
 			boolean exists = hasRecordDoppi(object);
 			if (exists) {
-				addMessage(Messages.getMessage("record.already.exists"));
+				msg.add(new ResponseMessage(Messages.getMessage("record.already.exists")));
 				return false;
 			}
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			addMessage(ex.getMessage());
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(VigilePatenti object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(VigilePatenti object) {
-		return true;
-	}
-
-	@Override
-	public boolean afterDbAction(DbOperation action, VigilePatenti object) {
-		try {
-			if (action == DbOperation.INSERT) {
-				if (Utils.isValidDate(object.getDateExpiration())) {
-					scadenzeManager.insertExp(object.getId(), object.getDate(), object.getDateExpiration(),
-							CostantiVVF.AREA_PATENTI_SERVIZIO, object.getIdVigile());
-				}
-			}
-		} catch (Exception ex) {
-			addMessage(ex.getMessage());
-			ex.printStackTrace();
-			log.error("Exception in function:" + this.getClass().getCanonicalName() + ".afterDbAction during: "
-					+ action.toString());
+			msg.add(new ResponseMessage(ex.getMessage()));
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public void operazioneDopoInserimento(VigilePatenti object) throws Exception, CustomException {
+		if (Utils.isValidDate(object.getDateExpiration())) {
+			scadenzeManager.insertExp(object.getId(), object.getDate(), object.getDateExpiration(),
+					CostantiVVF.AREA_PATENTI_SERVIZIO, object.getIdVigile());
+		}
 	}
 	
-	@Override
-	public boolean checkObjectForDelete(VigilePatenti object) {
-		return true;
-	}
 }

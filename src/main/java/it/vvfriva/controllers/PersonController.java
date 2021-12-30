@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Person;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.services.PersonService;
 /**
@@ -40,12 +39,12 @@ public class PersonController {
 	
 	@PostMapping(path = "/new")
 	public @ResponseBody JsonResponse<Person> save(@RequestBody Person person) {
-		return personService.saveOrUpdate(person, DbOperation.INSERT);
+		return personService.save(person);
 	}
 	
 	@PostMapping(path = "/update")
 	public @ResponseBody JsonResponse<Person> update(@RequestBody Person person) {
-		return personService.saveOrUpdate(person, DbOperation.INSERT);
+		return personService.update(person);
 	}
 	
 	@GetMapping(path = "/{id}/delete")

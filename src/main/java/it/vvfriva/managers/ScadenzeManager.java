@@ -19,10 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonArray;
@@ -34,7 +31,6 @@ import it.vvfriva.entity.Scadenze;
 import it.vvfriva.entity.SettingScadenze;
 import it.vvfriva.entity.VigileCertificati;
 import it.vvfriva.entity.VigilePatenti;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.KeyValueColumn;
 import it.vvfriva.models.KeyValueTipiScadenza;
 import it.vvfriva.models.VigileModel;
@@ -42,10 +38,10 @@ import it.vvfriva.repository.ScadenzeRepository;
 import it.vvfriva.utils.CostantiVVF;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	
 	final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -75,17 +71,6 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	
 	@PersistenceContext
 	EntityManager em;
-
-	@Override
-	public CrudRepository<Scadenze, Integer> getRepository() {
-		return repository;
-	}
-	
-	public ScadenzeManager getNewInstance() {
-		ScadenzeManager scandezeManager = new ScadenzeManager();
-		beanFactory.autowireBean(scandezeManager);
-		return scandezeManager;
-	}
 	/**
 	 * 
 	 * @param idVigile     - id vigile
@@ -263,66 +248,6 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 		}
 		return dateCalc;
 	}
-
-	@Override
-	public boolean checkCampiObbligatori(Scadenze object) {
-		
-		if (!Utils.isValidDate(object.getDateFrom())) {
-			log.error("Can't persist record invalid field 'expiration date'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"expiration date"}));
-			return false;
-		}
-		
-		if (!Utils.isValidId(object.getIdRiferimento())) {
-			log.error("Can't persist record invalid field 'idRiferimento'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"idRif"}));
-			return false;
-		}
-		
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(Scadenze object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Scadenze object) {
-		return true;
-	}
-
-	@Override
-	public boolean afterDbAction(DbOperation action, Scadenze object) {
-		try {
-			
-			Scadenze scadenza = null;
-			if (action == DbOperation.INSERT) {
-				//recupero la registrazione precedente e la metto come rinnovata 
-				scadenza = getLastFrom(object.getDateFrom(), object.getIdRiferimento(), object.getIdArea(), 0);
-				if (scadenza != null) {
-					scadenza.setUpdateData(new Date());
-					scadenza.setRenew(1);
-					this.getNewInstance().dbManager(DbOperation.UPDATE, scadenza);
-				}
-			} else if (action == DbOperation.DELETE) {
-				/* vado a ripristinare la scadenza precedende */
-				scadenza = getLastFrom(object.getDateFrom(), object.getIdRiferimento(), object.getIdArea(), 1);
-				if (scadenza != null) {
-					scadenza.setRenew(null);
-					scadenza.setUpdateData(null);
-					this.getNewInstance().dbManager(DbOperation.UPDATE, scadenza);
-				}
-			}
-			
-		} catch (Exception e) {
-			log.error("Exception in function" + this.getClass().getCanonicalName() + ".afterDbAction" , e);
-			e.printStackTrace();
-			addMessage(e.getMessage());
-			return false;
-		}
-		return true;
-	}
 	/**
 	 * il metodo viene eseguito in fase di creazione tabellone di scadenze, 
 	 * ritorna le colonne possibili (abilitate alla scadenza)
@@ -435,9 +360,9 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	 * @param dateExipration
 	 * @param idArea
 	 * @return
-	 * @throws CustomException
+	 * @throws Exception 
 	 */
-	public Scadenze insertExp(Integer idRiferimento, Date dateFrom, Date dateExipration, Integer idArea, Integer idVigile) throws CustomException {
+	public Scadenze insertExp(Integer idRiferimento, Date dateFrom, Date dateExipration, Integer idArea, Integer idVigile) throws Exception {
 		Scadenze scadenza = null;
 		try {
 			
@@ -448,7 +373,7 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 			scadenza.setIdArea(idArea);
 			scadenza.setIdRiferimento(idRiferimento);
 			scadenza.setIdVigile(idVigile);
-			this.dbManager(DbOperation.INSERT, scadenza);
+			this.save(scadenza);
 			
 		} catch (CustomException ex) {
 			ex.printStackTrace();
@@ -585,10 +510,40 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 		}
 		return data;
 	}
-
+	
 	@Override
-	public boolean checkObjectForDelete(Scadenze object) {
+	public boolean controllaCampiObbligatori(Scadenze object, List<ResponseMessage> msg) 
+			throws CustomException, Exception {
+		if (!Utils.isValidDate(object.getDateFrom())) {
+			log.error("Can't persist record invalid field 'expiration date'");
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"expiration date"})));
+			return false;
+		}
+		
+		if (!Utils.isValidId(object.getIdRiferimento())) {
+			log.error("Can't persist record invalid field 'idRiferimento'");
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"idRif"})));
+			return false;
+		}
 		return true;
 	}
 	
+	@Override
+	public void operazioneDopoInserimento(Scadenze object) throws Exception, CustomException {
+		Scadenze scadenza = getLastFrom(object.getDateFrom(), object.getIdRiferimento(), object.getIdArea(), 0);
+		if (scadenza != null) {
+			scadenza.setUpdateData(new Date());
+			scadenza.setRenew(1);
+			this.update(object);
+		}
+	}
+	@Override
+	public void operazionePrimaDiCancellare(Scadenze object) throws Exception, CustomException {
+		Scadenze scadenza = getLastFrom(object.getDateFrom(), object.getIdRiferimento(), object.getIdArea(), 1);
+		if (scadenza != null) {
+			scadenza.setRenew(null);
+			scadenza.setUpdateData(null);
+			this.update(object);
+		}
+	}
 }

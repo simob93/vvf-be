@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.vvfriva.entity.ArticoliDepositi;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.ArticoliDepositiManager;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.utils.Messages;
@@ -78,12 +77,12 @@ public class ArticoliDepositiService extends DbServiceStandard<ArticoliDepositi>
 		try {
 			for (ArticoliDepositi cat: listArtDepositi) {
 				if ((cat.getEliminare() != null) && (cat.getEliminare().booleanValue())) {
-					this.manager.dbManager(DbOperation.DELETE, cat.getId());
+					this.manager.delete(cat);
 				}
 				else if (!Utils.isValidId(cat.getId())) {
-					this.manager.dbManager(DbOperation.INSERT, cat);
+					this.manager.save(cat);
 				} else {
-					this.manager.dbManager(DbOperation.UPDATE, cat);
+					this.manager.update(cat);
 				}
 			}
 			message = Messages.getMessage("operation.ok");
@@ -91,11 +90,11 @@ public class ArticoliDepositiService extends DbServiceStandard<ArticoliDepositi>
 			success = false;
 			message = Messages.getMessage("operation.ko");
 			e.printStackTrace();
-			msg.add(new ResponseMessage(ResponseMessage.MSG_TYPE_LOUD, message));
+			msg.add(new ResponseMessage(ResponseMessage.ERRORE, message));
 			logger.error(Utils.errorInMethod(e.getMessage()));
 		} finally {
 			if (success) {
-				msg.add(new ResponseMessage(ResponseMessage.MSG_TYPE_LOUD, message));
+				msg.add(new ResponseMessage(ResponseMessage.ERRORE, message));
 			}
 			result = new JsonResponse<Boolean>(success, msg, null);
 		}

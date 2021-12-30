@@ -17,11 +17,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.VigileCertificati;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.KeyValueTipiScadenza;
 import it.vvfriva.models.ModelPortletVigileCertificati;
 import it.vvfriva.models.ModelPrntAutorizzazioni;
@@ -29,6 +27,7 @@ import it.vvfriva.repository.VigileCertificatiRepository;
 import it.vvfriva.utils.CostantiVVF;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * 
@@ -46,11 +45,6 @@ public class VigileCertificatiManager extends DbManagerStandard<VigileCertificat
 	@Autowired ScadenzeManager scadenzeManager;
 	@Autowired EntityManager em;
 	
-	@Override
-	public CrudRepository<VigileCertificati, Integer> getRepository() {
-		return repository;
-	}
-
 	/**
 	 * 
 	 * @param idVigile
@@ -169,37 +163,6 @@ public class VigileCertificatiManager extends DbManagerStandard<VigileCertificat
 		return data;
 	}
 
-	@Override
-	public boolean checkCampiObbligatori(VigileCertificati object) {
-		/*
-		 * sono neccessari al fine di un insermiento ok! i campi numero patente
-		 * solitamente alfanumerico data di svolgimento patente e tipologia di patete
-		 */
-		if (!Utils.isValidDate(object.getDate())) {
-			log.warn("Can't persist record invalid field date");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Data di inizio"}));
-			return false;
-		}
-		if (!Utils.isValidId(object.getIdPerson())) {
-			log.warn("Can't persist record invalid field id person");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Tipo patente"}));
-			return false;
-		}
-		//controllo record doppi
-		try {
-			boolean exists = hasRecordDoppi(object);
-			if (exists) {
-				addMessage(Messages.getMessage("record.already.exists"));
-				return false;
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			addMessage(ex.getMessage());
-			return false;
-		}
-		return true;
-	}
 	/**
 	 * 
 	 * @param object
@@ -238,37 +201,45 @@ public class VigileCertificatiManager extends DbManagerStandard<VigileCertificat
 		}
 		return false;
 	}
-	@Override
-	public boolean checkObjectForInsert(VigileCertificati object) {
-		return true;
-	}
+
 
 	@Override
-	public boolean checkObjectForUpdate(VigileCertificati object) {
-		return true;
-	}
-	@Override
-	public boolean afterDbAction(DbOperation action, VigileCertificati object) {
-		
+	public boolean controllaCampiObbligatori(VigileCertificati object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
+		/*
+		 * sono neccessari al fine di un insermiento ok! i campi numero patente
+		 * solitamente alfanumerico data di svolgimento patente e tipologia di patete
+		 */
+		if (!Utils.isValidDate(object.getDate())) {
+			log.warn("Can't persist record invalid field date");
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Data di inizio"})));
+			return false;
+		}
+		if (!Utils.isValidId(object.getIdPerson())) {
+			log.warn("Can't persist record invalid field id person");
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Tipo patente"})));
+			return false;
+		}
+		//controllo record doppi
 		try {
-			if (action == DbOperation.INSERT) {
-				if (Utils.isValidDate(object.getDateExpiration())) {
-					scadenzeManager.insertExp(object.getId(), object.getDate(), 
-							object.getDateExpiration(), CostantiVVF.AREA_AUTORIZZAZIONI, object.getIdVigile());
-				}
+			boolean exists = hasRecordDoppi(object);
+			if (exists) {
+				msg.add(new ResponseMessage(Messages.getMessage("record.already.exists")));
+				return false;
 			}
+			
 		} catch (Exception ex) {
-			addMessage(ex.getMessage());
 			ex.printStackTrace();
-			log.error("Exception in function:" + this.getClass().getCanonicalName()+ ".afterDbAction during: " + action.toString());
+			msg.add(new ResponseMessage(ex.getMessage()));
 			return false;
 		}
 		return true;
 	}
-
 	@Override
-	public boolean checkObjectForDelete(VigileCertificati object) {
-		return true;
+	public void operazioneDopoInserimento(VigileCertificati object) throws Exception, CustomException {
+		if (Utils.isValidDate(object.getDateExpiration())) {
+			scadenzeManager.insertExp(object.getId(), object.getDate(), 
+					object.getDateExpiration(), CostantiVVF.AREA_AUTORIZZAZIONI, object.getIdVigile());
+		}
 	}
-
 }

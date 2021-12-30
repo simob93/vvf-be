@@ -14,6 +14,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -117,8 +118,16 @@ public class VigileController {
 	 */
 	@PostMapping(path = "/new")
 	public @ResponseBody JsonResponse<Vigile> save(@RequestBody Vigile vigile) {
-		return vigileService.saveOrUpdate(vigile, DbOperation.INSERT);
+		return vigileService.save(vigile);
 	}
+	
+	@PostMapping(path = "/uploadFoto", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public @ResponseBody JsonResponse<Vigile> save(
+			@RequestParam("idVigile") Integer idVigile,
+			@RequestParam("base64") String base64) {
+		return vigileService.uploadFoto(idVigile, base64);
+	}
+	
 	/**
 	 * 
 	 * @param vigile
@@ -126,7 +135,7 @@ public class VigileController {
 	 */
 	@PostMapping(path = "/update")
 	public @ResponseBody JsonResponse<Vigile> update(@RequestBody Vigile vigile) {
-		return vigileService.saveOrUpdate(vigile, DbOperation.UPDATE);
+		return vigileService.update(vigile);
 
 	}
 	/**
@@ -303,7 +312,6 @@ public class VigileController {
 	public @ResponseBody JsonResponse<Dotazione> get(@RequestParam("id") Integer id) {
 		return dotazioneService.getObjectById(id);
 	}
-	
 	/**
 	 * 
 	 * @param dotazione
@@ -311,16 +319,7 @@ public class VigileController {
 	 */
 	@PostMapping("/dotazione/save")
 	public @ResponseBody JsonResponse<Dotazione> saveDotazione(@RequestBody Dotazione dotazione) {
-		return dotazioneService.saveOrUpdate(dotazione, DbOperation.INSERT);
-	}
-	/**
-	 * 
-	 * @param dotazione
-	 * @return
-	 */
-	@PostMapping("/dotazione/multisave")
-	public @ResponseBody JsonResponse<Dotazione> saveDotazione(@RequestBody List<Dotazione> dotazione) {
-		return dotazioneService.insert(dotazione);
+		return dotazioneService.save(dotazione);
 	}
 	/**
 	 * 
@@ -329,7 +328,7 @@ public class VigileController {
 	 */
 	@PostMapping("/dotazione/update")
 	public @ResponseBody JsonResponse<Dotazione> updateDotazione(@RequestBody Dotazione dotazione) {
-		return dotazioneService.saveOrUpdate(dotazione, DbOperation.UPDATE);
+		return dotazioneService.update(dotazione);
 	}
 	/**
 	 * 

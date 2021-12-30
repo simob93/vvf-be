@@ -17,13 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Protocol;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.repository.ProtocolRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * Manager per la gestione dei protoccoli 
@@ -44,11 +44,6 @@ public class ProtocolManager extends DbManagerStandard<Protocol> {
 	@PersistenceContext
 	EntityManager em;
 
-	
-	@Override
-	public CrudRepository<Protocol, Integer> getRepository() {
-		return protocolRepository;
-	}
 	
 	/*******************************************************************************************************
 	 * QUERY
@@ -130,64 +125,35 @@ public class ProtocolManager extends DbManagerStandard<Protocol> {
 	/*******************************************************************************************************
 	 * Metodo utili al DbManagerStandard durante le CRUD OPERATION
 	 *******************************************************************************************************/
+
+
 	@Override
-	public boolean checkCampiObbligatori(Protocol object) {
-		
+	public boolean controllaCampiObbligatori(Protocol object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		//data del protoccollo obbligatoria
 		if (!Utils.isValidDate(object.getDate())) {
 			logger.error("Can't persist record invalid field 'date'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Data"}));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Data"})));
 			return false;
 		}
 		//tipo protocollo obbligatorio
 		if (Utils.isEmptyString(object.getType())) {
 			logger.error("Can't persist record invalid field 'type'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Tipo protocollo (E/U)"}));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Tipo protocollo (E/U)"})));
 			return false;
 		}
 		if (Utils.isEmptyString(object.getObject())) {
 			logger.error("Can't persist record invalid field 'object'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Oggetto del protocollo"}));
-			return false;
-		}
-		
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(Protocol object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Protocol object) {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see it.vvfriva.managers.DbManagerStandard#afterDbAction(it.vvfriva.enums.DbOperation, java.lang.Object)
-	 */
-	@Override
-	public boolean afterDbAction(DbOperation action, Protocol object) {
-		try {
-			
-			if (action == DbOperation.INSERT) {
-				//calc numero strUid whit procedure 
-				em.flush();
-				em.createNamedStoredProcedureQuery("calc_num_prot").setParameter("id", object.getId())
-				.executeUpdate();
-			}
-			
-		} catch (Exception e) {
-			log.error("Exception in method: " + this.getClass().getCanonicalName() + ".afterDbAction", e);
-			addMessage(e.getMessage());
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Oggetto del protocollo"})));
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public boolean checkObjectForDelete(Protocol object) {
-		return true;
+	public void operazioneDopoInserimento(Protocol object) throws Exception, CustomException {
+		em.flush();
+		em.createNamedStoredProcedureQuery("calc_num_prot").setParameter("id", object.getId())
+		.executeUpdate();
 	}
 }

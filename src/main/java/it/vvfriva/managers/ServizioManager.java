@@ -15,17 +15,14 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Gradi;
 import it.vvfriva.entity.Servizio;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.repository.ServizioRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * Manager per la gestione dei servizi vigile. 
@@ -34,16 +31,7 @@ import it.vvfriva.utils.Utils;
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ServizioManager extends DbManagerStandard<Servizio> {
-	
-	private @Autowired AutowireCapableBeanFactory beanFactory;
-
-	public ServizioManager getNewInstance() {
-		ServizioManager servizioManager = new ServizioManager();
-		beanFactory.autowireBean(servizioManager);
-		return servizioManager;
-	}
 	
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -169,136 +157,58 @@ public class ServizioManager extends DbManagerStandard<Servizio> {
 		}
 		return result;
 	}
-	/**
-	 * 
-	 * @param object
-	 * @return
-	 */
-	private boolean checkPeriodoServizio(Servizio object) {
-		List<Servizio> listServizi = null;
-		try {
-			listServizi = list(object.getIdVigile(), object.getDateStart(), object.getDateEnd(), object.getIdTeam(), null, object.getId());
-			if (!Utils.isEmptyList(listServizi)) {
-				addMessage(Messages.getMessage("vigile.servizio.closed"));
-				return false;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Exception in function: " + this.getClass().getCanonicalName() + ".checkPeriodoServizio", e);
-		}
-		return true;
-	}
-
+	
 	@Override
-	public CrudRepository<Servizio, Integer> getRepository() {
-		return servizioRepository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(Servizio object) {
-		
+	public boolean controllaCampiObbligatori(Servizio object, List<ResponseMessage> msg) throws CustomException, Exception {
 		if (!Utils.isValidDate(object.getDateStart())) {
 			logger.error("Can't persist record invalid field 'date start'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {Messages.getMessage("field.date.start")}));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {Messages.getMessage("field.date.start")})));
 			return false;
 		}
-		
 		//se ho una squadra allora devo anche obbligare ad inserire una lettera al vigile
 		if (Utils.isValidId(object.getIdTeam()) && 
 				Utils.isEmptyString(object.getLetter())) {
 			logger.error("Can't persist record invalid field 'lettera vigile'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Lettera"}));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"Lettera"})));
 			return false;
 		}
 		if (!Utils.isValidId(object.getIdVigile())) {
 			logger.error("Can't persist record invalid field 'id vigile'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {Messages.getMessage("field.vigile")}));
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(Servizio object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Servizio object) {
-		return checkPeriodoServizio(object);
-	}
-	
-	
-	
-	@Override
-	public boolean beforeDbAction(DbOperation action, Servizio object) {
-		try {
-			if (action == DbOperation.INSERT) {
-				//recupero l'ultimo servizio attivo e lo vado a chiudere 
-				Servizio ultimoServizio = getLast(object.getIdVigile(), object.getDateStart());
-								
-				if (ultimoServizio != null && !Utils.isValidDate(ultimoServizio.getDateEnd())) {
-					//chiudo il precedente servizio				
-					ultimoServizio.setDateEnd(new LocalDateTime(object.getDateStart()).minusMinutes(1).toDate());
-					this.getNewInstance().dbManager(DbOperation.UPDATE, ultimoServizio);
-				}
-				
-				if(!checkPeriodoServizio(object)) {
-					return false;
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Exception in function: " + this.getClass().getCanonicalName() + ".beforeDbAction durin [action]" + action.toString());
-			addMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("operation.ko"));
-			return false;
-		}
-		return true;
-	}
-	@Override
-	public boolean afterDbAction(DbOperation action, Servizio object) {
-		try {
-			if (action == DbOperation.INSERT) {
-				if (Utils.isValidId(object.getGrado())) {
-					//viene inserito anche il grado
-					Gradi grado = new Gradi();
-					grado.setDal(object.getDateStart());
-					grado.setAl(object.getDateEnd());
-					grado.setGrado(object.getGrado());
-					grado.setIdServizio(object.getId());
-					gradiManager.dbManager(DbOperation.INSERT, grado);
-				}
-			}
-			
-			if (action == DbOperation.UPDATE) {
-				if (Utils.isValidDate(object.getDateEnd())) {
-					Gradi grado = gradiManager.getLastActiveGrado(object.getId(), object.getDateEnd());
-					if (grado != null && !Utils.isValidDate(grado.getAl())) {
-						grado.setAl(object.getDateEnd());
-						gradiManager.dbManager(DbOperation.UPDATE, grado);
-					}
-				}
-			}
-			
-			if (action == DbOperation.DELETE) {
-				List<Gradi> listGradi = gradiManager.listBy(null, null, null, object.getId());
-				if (!Utils.isEmptyList(listGradi)) {
-					for (Gradi grado: listGradi) {
-						gradiManager.dbManager(DbOperation.DELETE, grado.getId());
-					}
-				}
-			}
-			
-		} catch (Exception e) {
-			logger.error("Exception in function: " + this.getClass().getCanonicalName() + ".afterDbAction durin [action]" + action.toString());
-			addMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("operation.ko"));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {Messages.getMessage("field.vigile")})));
 			return false;
 		}
 		return true;
 	}
 	
 	@Override
-	public boolean checkObjectForDelete(Servizio object) {
-		return true;
+	public void operazioneDopoInserimento(Servizio object) throws Exception, CustomException {
+		if (Utils.isValidId(object.getGrado())) {
+			//viene inserito anche il grado
+			Gradi grado = new Gradi();
+			grado.setDal(object.getDateStart());
+			grado.setAl(object.getDateEnd());
+			grado.setGrado(object.getGrado());
+			grado.setIdServizio(object.getId());
+			gradiManager.save(grado);
+		}
 	}
-
+	@Override
+	public void operazionePrimaDiInserire(Servizio object) throws Exception, CustomException {
+		Servizio ultimoServizio = getLast(object.getIdVigile(), object.getDateStart());
+		if (ultimoServizio != null && !Utils.isValidDate(ultimoServizio.getDateEnd())) {
+			//chiudo il precedente servizio				
+			ultimoServizio.setDateEnd(new LocalDateTime(object.getDateStart()).minusMinutes(1).toDate());
+			this.update(ultimoServizio);
+		}
+	}
+	@Override
+	public void operazioneDopoModifica(Servizio object) throws Exception, CustomException {
+		if (Utils.isValidDate(object.getDateEnd())) {
+			Gradi grado = gradiManager.getLastActiveGrado(object.getId(), object.getDateEnd());
+			if (grado != null && !Utils.isValidDate(grado.getAl())) {
+				grado.setAl(object.getDateEnd());
+				gradiManager.update(grado);
+			}
+		}
+	}
 }

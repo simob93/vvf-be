@@ -17,14 +17,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.RuoliPermessi;
 import it.vvfriva.models.TreeNodeMenu;
 import it.vvfriva.repository.RuoliPermessiRepository;
 import it.vvfriva.utils.CostantiVVF;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 /**
@@ -77,25 +78,6 @@ public class RuoliPermessiManager extends DbManagerStandard<RuoliPermessi> {
 	}
 	
 	
-	@Override
-	public CrudRepository<RuoliPermessi, Integer> getRepository() {
-		return repository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(RuoliPermessi object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(RuoliPermessi object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(RuoliPermessi object) {
-		return true;
-	}
 	/**
 	 * 
 	 * @param mappa
@@ -158,9 +140,11 @@ public class RuoliPermessiManager extends DbManagerStandard<RuoliPermessi> {
 	}
 
 
-	@Override
-	public boolean checkObjectForDelete(RuoliPermessi object) {
-		return false;
-	}
 
+
+	@Override
+	public boolean controllaCampiObbligatori(RuoliPermessi object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
+		return true;
+	}
 }

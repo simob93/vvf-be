@@ -15,11 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.UtentiRuoli;
 import it.vvfriva.repository.UtentiRuoliRepository;
+import it.vvfriva.utils.CustomException;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * 
@@ -60,30 +61,11 @@ public class UtentiRuoliManager extends DbManagerStandard<UtentiRuoli> {
 		}
 		return data;
 	}
-	
-	@Override
-	public CrudRepository<UtentiRuoli, Integer> getRepository() {
-		return this.repository;
-	}
-	
-	@Override
-	public boolean checkCampiObbligatori(UtentiRuoli object) {
-		return true;
-	}
+
 
 	@Override
-	public boolean checkObjectForInsert(UtentiRuoli object) {
+	public boolean controllaCampiObbligatori(UtentiRuoli object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		return true;
 	}
-
-	@Override
-	public boolean checkObjectForUpdate(UtentiRuoli object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForDelete(UtentiRuoli object) {
-		return true;
-	}
-
 }

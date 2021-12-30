@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Mansioni;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.services.MansioniService;
 
@@ -45,7 +44,7 @@ public class MansioniController {
 	 */
 	@PostMapping(path = "/new")
 	public @ResponseBody JsonResponse<Mansioni> save(@RequestBody Mansioni carriera) {
-		return carrieraService.saveOrUpdate(carriera, DbOperation.INSERT);
+		return carrieraService.save(carriera);
 	}
 
 	/**
@@ -55,7 +54,7 @@ public class MansioniController {
 	 */
 	@PostMapping(path = "/update")
 	public @ResponseBody JsonResponse<Mansioni> update(@RequestBody Mansioni carriera) {
-		return carrieraService.saveOrUpdate(carriera, DbOperation.INSERT);
+		return carrieraService.update(carriera);
 	}
 
 	/**

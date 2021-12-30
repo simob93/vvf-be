@@ -1,4 +1,7 @@
 package it.vvfriva.enums;
+
+import it.vvfriva.utils.Utils;
+
 /**
  * Enums gestione taglie
  * @author simone
@@ -70,5 +73,19 @@ public enum EnumsTaglie {
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
+	}
+	
+	public static String getDescrizioneTaglia(String codiceTaglia) {
+		String tagliaOut = null;
+		if (!Utils.isEmptyString(codiceTaglia)) {
+			for(EnumsTaglie taglia: EnumsTaglie.values()) {
+				if (Utils.stringEguals(codiceTaglia, taglia.getCodice())) {
+					tagliaOut = taglia.getDescr();
+					break;
+				}
+			}
+		}
+		return tagliaOut;
+		
 	}
 }

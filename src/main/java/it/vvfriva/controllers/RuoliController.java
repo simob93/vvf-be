@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Ruoli;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.models.KeyValue;
 import it.vvfriva.models.TreeNodeMenu;
@@ -50,7 +49,7 @@ public class RuoliController {
 	
 	@PostMapping("/new")
 	private @ResponseBody JsonResponse<Ruoli> saveRuolo(@RequestBody Ruoli ruolo) {
-		return ruoliService.saveOrUpdate(ruolo, DbOperation.INSERT);
+		return ruoliService.save(ruolo);
 	}
 	/**
 	 * modifica account utente
@@ -59,7 +58,7 @@ public class RuoliController {
 	 */
 	@PostMapping("/update")
 	private @ResponseBody JsonResponse<Ruoli> updateRuolo(@RequestBody Ruoli ruolo) {
-		return ruoliService.saveOrUpdate(ruolo, DbOperation.UPDATE);
+		return ruoliService.update(ruolo);
 	}
 	/**
 	 * eliminazione account utente

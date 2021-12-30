@@ -58,7 +58,7 @@ public class ProtocolService extends DbServiceStandard<Protocol> {
 		String message = "";
 		Long total = null;
 		try {
-			total = protocolManager.getRepository().count();
+			//total = protocolManager.count();
 			data = protocolManager.list(firstResult, maxResult, oggetto, idFaldone, tipologia, from, to, numeroProtocollo);
 			message = Messages.getMessage("search.ok");
 		} catch (Exception ex) {

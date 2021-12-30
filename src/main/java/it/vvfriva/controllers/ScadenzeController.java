@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Scadenze;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.ScadenzeManager;
 import it.vvfriva.managers.VigileCertificatiManager;
 import it.vvfriva.models.JsonResponse;
@@ -59,7 +58,7 @@ public class ScadenzeController {
 	 */
 	@PostMapping(path = "/new")
 	public @ResponseBody JsonResponse<Scadenze> save(@RequestBody Scadenze scadenza) {
-		return scadenzeService.saveOrUpdate(scadenza, DbOperation.INSERT);
+		return scadenzeService.save(scadenza);
 	}
 	/**
 	 * api for update class scadenza
@@ -68,7 +67,7 @@ public class ScadenzeController {
 	 */
 	@PostMapping(path = "/update")
 	public @ResponseBody JsonResponse<Scadenze> update(@RequestBody Scadenze scadenza) {
-		return scadenzeService.saveOrUpdate(scadenza, DbOperation.UPDATE);
+		return scadenzeService.update(scadenza);
 
 	}
 	/**

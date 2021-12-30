@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +28,9 @@ import it.vvfriva.entity.Utenti;
 import it.vvfriva.entity.UtentiRuoli;
 import it.vvfriva.enums.RuoliDefault;
 import it.vvfriva.repository.UtentiRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * 
@@ -48,10 +49,6 @@ public class UtentiManager extends DbManagerStandard<Utenti> implements UserDeta
 	@Autowired UtentiRuoliManager utentiRuoliManager;
 	
 	
-	@Override
-	public CrudRepository<Utenti, Integer> getRepository() {
-		return repository;
-	}
 	public List<Utenti> listUtenti() throws Exception {
 		List<Utenti> data = null;
 		try {
@@ -108,53 +105,6 @@ public class UtentiManager extends DbManagerStandard<Utenti> implements UserDeta
 		return data;
 		
 	}
-	/**
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 * @throws Exception 
-	 */
-//	public LoginModel doLogin(String username, String password) throws Exception {
-//		
-//		if (Utils.isEmptyString(username)) {
-//			StringBuilder sbuf = new StringBuilder();
-//			sbuf.append(Messages.getMessage("search.ko")).append(": ")
-//			.append(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Username"}));
-//			throw new Exception(sbuf.toString());
-//		}
-//		
-//		if (Utils.isEmptyString(password)) {
-//			StringBuilder sbuf = new StringBuilder();
-//			sbuf.append(Messages.getMessage("search.ko")).append(": ")
-//			.append(Messages.getMessageFormatted("field.err.mandatory", new String[] {"password"}));
-//			throw new Exception(sbuf.toString());
-//		}
-//		
-//		LoginModel result = null;
-//		try {
-//			
-//			Utenti utente = this.getByUserName(username);
-//			if (utente != null) {
-//				String pwd = utente.getPwd();
-//				String encodedPassword = SecurityService.encodePassword(password);
-//				/*
-//				 * verifico se le due password sono uguali 
-//				 * se cosi fosse procedo con l'autenticazione
-//				 * */
-//				if (!Utils.stringEquals(pwd, encodedPassword)) {
-//					throw new Exception(Messages.getMessage("login.pwd.not.valid"));
-//				}
-//				result = new LoginModel(username, null);
-//			} else {
-//				throw new Exception(Messages.getMessage("login.username.not.found"));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new Exception(e.getMessage());
-//		}
-//		return result;
-//	}
 	
 	/**
 	 * Controlla la presenza di un record duplicato, avente stesso username
@@ -188,72 +138,6 @@ public class UtentiManager extends DbManagerStandard<Utenti> implements UserDeta
 		} 
 		return !Utils.isEmptyList(data);
 	}
-
-	@Override
-	public boolean checkCampiObbligatori(Utenti object) {
-		
-		if (Utils.isEmptyString(object.getNome())) {
-			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field nome"));
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Nome"}));
-			return false;
-		}
-		if (Utils.isEmptyString(object.getCognome())) {
-			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field cognome"));
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Cognome"}));
-			return false;
-		}
-		if (Utils.isEmptyString(object.getEmail())) {
-			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field email"));
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Email"}));
-			return false;
-		}
-		if (Utils.isEmptyString(object.getUsername())) {
-			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field username"));
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Username"}));
-			return false;
-		}
-		
-		//controllo utente duplicato
-		boolean exists = false;
-		try {
-			exists = checkRecordDuplicato(object);
-			if (exists) {
-				logger.error(Utils.errorInMethod("record already exists!!"));
-				addMessage(Messages.getMessage("register.user.exists"));
-				return false;
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(Utils.errorInMethod(e.getMessage()));
-			addMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("operation.ko"));
-		}
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(Utenti object) {
-
-		if (Utils.isEmptyList(object.getRuolo())) {
-			//creazione ruolo utenti di default;
-			UtentiRuoli ruolo = new UtentiRuoli();
-			ruolo.setId(null);
-			ruolo.setIdRuolo(RuoliDefault.USER.getId());
-			List<UtentiRuoli> listRoles = new ArrayList<UtentiRuoli>();
-			listRoles.add(ruolo);
-			object.setRuolo(listRoles);
-		}
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Utenti object) {
-		Utenti utente = this.getObjById(object.getId());
-		if (utente != null) {
-			object.setPwd(utente.getPwd());
-		}
-		return true;
-	}
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {
@@ -268,21 +152,67 @@ public class UtentiManager extends DbManagerStandard<Utenti> implements UserDeta
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 	}
+	
 	@Override
-	public boolean checkObjectForDelete(Utenti object) {
+	public boolean controllaCampiObbligatori(Utenti object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
+		if (Utils.isEmptyString(object.getNome())) {
+			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field nome"));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Nome"})));
+			return false;
+		}
+		if (Utils.isEmptyString(object.getCognome())) {
+			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field cognome"));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Cognome"})));
+			return false;
+		}
+		if (Utils.isEmptyString(object.getEmail())) {
+			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field email"));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Email"})));
+			return false;
+		}
+		if (Utils.isEmptyString(object.getUsername())) {
+			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field username"));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Username"})));
+			return false;
+		}
+		
+		//controllo utente duplicato
+		boolean exists = false;
+		try {
+			exists = checkRecordDuplicato(object);
+			if (exists) {
+				logger.error(Utils.errorInMethod("record already exists!!"));
+				msg.add(new ResponseMessage(Messages.getMessage("register.user.exists")));
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(Utils.errorInMethod(e.getMessage()));
+			msg.add(new ResponseMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("operation.ko")));
+		}
 		return true;
 	}
 	
-//	@Override
-//	public boolean afterDbAction(DbOperation action, Utenti object) {
-//		try {
-//			
-//			
-//			
-//		} catch (Exception e) {
-//			addMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("operation.ko"));
-//			return false;
-//		}
-//		return true;
-//	}
+	
+	
+	@Override
+	public void operazionePrimaDiModificare(Utenti object) throws Exception, CustomException {
+		Utenti utente = this.getObjById(object.getId());
+		if (utente != null) {
+			object.setPwd(utente.getPwd());
+		}
+	}
+	@Override
+	public void operazionePrimaDiInserire(Utenti object) throws Exception, CustomException {
+		if (Utils.isEmptyList(object.getRuolo())) {
+			//creazione ruolo utenti di default;
+			UtentiRuoli ruolo = new UtentiRuoli();
+			ruolo.setId(null);
+			ruolo.setIdRuolo(RuoliDefault.USER.getId());
+			List<UtentiRuoli> listRoles = new ArrayList<UtentiRuoli>();
+			listRoles.add(ruolo);
+			object.setRuolo(listRoles);
+		}
+	}
 }

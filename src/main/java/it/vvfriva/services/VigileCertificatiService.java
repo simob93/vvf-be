@@ -68,10 +68,13 @@ public class VigileCertificatiService extends DbServiceStandard<VigileCertificat
 			for (VigileCertificati vigileCertificato : vigileCertificati) {
 				if (!Utils.isValidId(vigileCertificato.getId())) {
 					vigileCertificato.setId(null);
+					vigileCertificatiManager.save(vigileCertificato);
+				} else {
+					vigileCertificatiManager.update(vigileCertificato);
 				}
-				vigileCertificatiManager.dbManager(action, vigileCertificato);
+				
 			}
-			message.add(new ResponseMessage(ResponseMessage.MSG_TYPE_LOUD, Messages.getMessage("operation.ok")));
+			message.add(new ResponseMessage(ResponseMessage.ERRORE, Messages.getMessage("operation.ok")));
 
 		} catch (CustomException ex) {
 			success = false;
@@ -81,7 +84,7 @@ public class VigileCertificatiService extends DbServiceStandard<VigileCertificat
 			ex.printStackTrace();
 		} catch (Exception e) {
 			success = false;
-			message.add(new ResponseMessage(ResponseMessage.MSG_TYPE_LOUD, e.getMessage()));
+			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
 			e.printStackTrace();
 			logger.error("Excepetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
 			e.printStackTrace();

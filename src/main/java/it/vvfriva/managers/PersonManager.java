@@ -14,17 +14,15 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Person;
 import it.vvfriva.entity.SettingScadenze;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.repository.PersonRepository;
 import it.vvfriva.utils.CostantiVVF;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 /**
@@ -33,7 +31,6 @@ import it.vvfriva.utils.Utils;
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class PersonManager extends DbManagerStandard<Person> {
 
 	@Autowired
@@ -145,117 +142,75 @@ public class PersonManager extends DbManagerStandard<Person> {
 	}
 
 	@Override
-	public CrudRepository<Person, Integer> getRepository() {
-		return personRepository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(Person object) {
+	public boolean controllaCampiObbligatori(Person object, List<ResponseMessage> msg) {
 		// campi obbligatori
 		if (!Utils.isValidId(object.getIdArea())) {
 			logger.warn("Can't persist  record Person invalid filed idArea");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "idArea" }));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "idArea" })));
 			return false;
 		}
 		if (Utils.isEmptyString(object.getName())) {
 			logger.warn("Can't persist  record Person invalid filed name");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "Descrizione" }));
+			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "Descrizione" })));
 			return false;
 		}
 		
 		if (object.getEnabledExpiry()) {
 			if ( object.getScadenza() == null) {
 				logger.warn("Can't persist  record Person invalid filed scadenza");
-				addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "Scadenza non compilata!" }));
+				msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "Scadenza non compilata!" })));
 				return false;
 			} else {
 				
 				if ( Utils.isValidId(object.getScadenza().getExpirationEvery()) ) {
 					logger.warn("Can't persist  record Person invalid filed expiration every");
-					addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "frequenza non impostata" }));
+					msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "frequenza non impostata" })));
 					return false;
 				}
 				
 				if ( Utils.isEmptyString(object.getScadenza().getExpirationType())) {
 					logger.warn("Can't persist  record Person invalid filed expiration every");
-					addMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "Ogni quanto non impostato" }));
+					msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "Ogni quanto non impostato" })));
 					return false;
 				}
 			}
 		}
 		return true;
 	}
-
-	@Override
-	public boolean checkObjectForInsert(Person object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Person object) {
-		return true;
-	}
-
-	@Override
-	public boolean afterDbAction(DbOperation action, Person object) {
-		try {
-			/*
-			 * se sto eseguendo un update oppure un insert delle risposte che prevedono la
-			 * gestione delle scadenze procedo con l'inserimento nella tabella specifica
-			 */
-			if ((action == DbOperation.INSERT) || (action == DbOperation.UPDATE)) {
-
-				if (object.getScadenza() != null && object.getEnabledExpiry()) {
-					object.getScadenza().setIdPerson(object.getId());
-					personScadenzeManager.dbManager(action, object.getScadenza());
-				} else {
-					// verifico se precedentemente èra presente una scadenza
-					SettingScadenze settScadenza = personScadenzeManager.getByIdPerson(object.getId());
-					if (settScadenza != null) {
-						personScadenzeManager.dbManager(DbOperation.DELETE, settScadenza.getId());
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Excpetion in function" + this.getClass().getCanonicalName() + ".afterDbAction during action"
-					+ action.toString(), e);
-			addMessage(e.getMessage());
-			return false;
-		}
-		return true;
-	}
-	/* (non-Javadoc)
-	 * @see it.vvfriva.managers.DbManagerStandard#beforeDbAction(it.vvfriva.enums.DbOperation, java.lang.Object)
-	 */
-	@Override
-	public boolean beforeDbAction(DbOperation action, Person object) {
-		try {
-			/*
-			 * se sto eseguendo un update oppure un insert delle risposte che prevedono la
-			 * gestione delle scadenze procedo con l'inserimento nella tabella specifica
-			 */
-			if ((action == DbOperation.INSERT) || (action == DbOperation.UPDATE)) {
-
-				if (object.getScadenza() != null && object.getEnabledExpiry()) {
-					object.getScadenza().setIdPerson(object.getId());
-				} 
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Excpetion in function" + this.getClass().getCanonicalName() + ".beforeDbAction during action"
-					+ action.toString(), e);
-			addMessage(e.getMessage());
-			return false;
-		}
-		return true;
-	}
 	
 	@Override
-	public boolean checkObjectForDelete(Person object) {
-		return true;
+	public void operazioneDopoInserimento(Person object) throws Exception, CustomException {
+		if (object.getEnabledExpiry()) {
+			this.personScadenzeManager.update(object.getScadenza());
+		} else {
+			SettingScadenze settScadenza = personScadenzeManager.getByIdPerson(object.getId());
+			if (settScadenza != null) {
+				personScadenzeManager.delete(settScadenza);
+			}
+		}
+	}
+	@Override
+	public void operazionePrimaDiInserire(Person object) throws Exception, CustomException {
+		if (object.getScadenza() != null && object.getEnabledExpiry()) {
+			object.getScadenza().setIdPerson(object.getId());
+		} 
+	}
+	@Override
+	public void operazioneDopoModifica(Person object) throws Exception, CustomException {
+		if (object.getEnabledExpiry()) {
+			this.personScadenzeManager.update(object.getScadenza());
+		} else {
+			SettingScadenze settScadenza = personScadenzeManager.getByIdPerson(object.getId());
+			if (settScadenza != null) {
+				personScadenzeManager.delete(settScadenza);
+			}
+		}
+	}
+	@Override
+	public void operazionePrimaDiModificare(Person object) throws Exception, CustomException {
+		if (object.getScadenza() != null && object.getEnabledExpiry()) {
+			object.getScadenza().setIdPerson(object.getId());
+		}
 	}
 
 }

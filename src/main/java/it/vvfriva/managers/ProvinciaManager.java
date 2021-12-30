@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Provincie;
@@ -25,7 +24,7 @@ import it.vvfriva.utils.Messages;
  */
 @Service
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class ProvinciaManager extends DbManagerStandard<Provincie> {
+public class ProvinciaManager {
     
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -54,29 +53,4 @@ public class ProvinciaManager extends DbManagerStandard<Provincie> {
 		return data;
 	}
 	
-	@Override
-	public CrudRepository<Provincie, Integer> getRepository() {
-		return repository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(Provincie object) {
-		return false;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(Provincie object) {
-		return false;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Provincie	 object) {
-		return false;
-	}
-
-	@Override
-	public boolean checkObjectForDelete(Provincie object) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

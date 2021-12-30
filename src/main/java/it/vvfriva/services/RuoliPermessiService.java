@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.RuoliPermessi;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.RuoliPermessiManager;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.models.KeyValue;
@@ -123,7 +122,7 @@ public class RuoliPermessiService extends DbServiceStandard<RuoliPermessi> {
 			RuoliPermessi permessoDB = this.manager.getObjById(idPermesso);
 			if (permessoDB != null) {
 				permessoDB.setPermesso(nuovoPermesso);
-				this.manager.dbManager(DbOperation.UPDATE, permessoDB);
+				this.manager.update(permessoDB);
 			}
 			message = Messages.getMessage("operation.ok");
 		} catch (Exception e) {

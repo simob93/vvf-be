@@ -13,15 +13,13 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Assenze;
 import it.vvfriva.repository.AssenzeRepository;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * Manger per la gestione delle assenze dei vigili
@@ -30,7 +28,6 @@ import it.vvfriva.utils.Utils;
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class AssenzeManager extends DbManagerStandard<Assenze> {
 	
 	private final Logger logger = LoggerFactory.getLogger(AssenzeManager.class);
@@ -41,10 +38,6 @@ public class AssenzeManager extends DbManagerStandard<Assenze> {
 	@Autowired 
 	private AssenzeRepository assenzaRepository;
 	
-	@Override
-	public CrudRepository<Assenze, Integer> getRepository() {
-		return assenzaRepository;
-	}
 	/**
 	 * 
 	 * @param idVigile
@@ -151,50 +144,33 @@ public class AssenzeManager extends DbManagerStandard<Assenze> {
 		}
 		return result;
 	}
-	
 
 	@Override
-	public boolean checkCampiObbligatori(Assenze object) {
-		
+	public boolean controllaCampiObbligatori(Assenze object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		if (!Utils.isValidDate(object.getDal())) {
-			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid filed data dal");
-			addMessage("Campo data dal obbligatorio");
+			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".controllaCampiObbligatori invalid filed data dal");
+			msg.add(new ResponseMessage("Campo data dal obbligatorio"));
 			return false;
 		}
 		
 		if (!Utils.isValidId(object.getMotivo())) {
-			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid motivo id");
-			addMessage("Campo motivo obbligatorio");
+			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".controllaCampiObbligatori invalid motivo id");
+			msg.add(new ResponseMessage("Campo motivo obbligatorio"));
 			return false;
 		}
 		try {
 			List<Assenze> listAssenze = this.listBy(object.getIdVigile(), object.getDal(), object.getAl(), object.getId());
 			if (!Utils.isEmptyList(listAssenze)) {
-				addMessage("è gia presente un'assenza per il periodo impostato");
+				logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".controllaCampiObbligatori sovraposizione di periodi ");
+				msg.add(new ResponseMessage("è gia presente un'assenza per il periodo impostato"));
 				return false;
 			}
 		} catch (CustomException e) {
 			e.printStackTrace();
-			addMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("search.ko"));
+			msg.add(new ResponseMessage(e.getMessage() != null ? e.getMessage() : Messages.getMessage("search.ko")));
 			return false;
 		}
-		
 		return true;
 	}
-
-	@Override
-	public boolean checkObjectForInsert(Assenze object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(Assenze object) {
-		return true;
-	}
-	
-	@Override
-	public boolean checkObjectForDelete(Assenze object) {
-		return true;
-	}
-
 }

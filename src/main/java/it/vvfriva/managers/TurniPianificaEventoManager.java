@@ -1,5 +1,7 @@
 package it.vvfriva.managers;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -10,12 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.TurniPianificaEvento;
 import it.vvfriva.repository.TurniPianificaEventoRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
  * Manager per la gestione dei singoli eventi che compongo una pianificazione 
@@ -34,34 +37,11 @@ public class TurniPianificaEventoManager extends DbManagerStandard<TurniPianific
 	
 	@Autowired TurniPianificaEventoRepository turnoPianificaEvento;
 	
-	@Override
-	public CrudRepository<TurniPianificaEvento, Integer> getRepository() {
-		return this.turnoPianificaEvento;
-	}
 	
 	/****************************************************************************************
 	 * METODO DI SUPPORTO
 	 ****************************************************************************************/
 	
-	@Override
-	public boolean checkCampiObbligatori(TurniPianificaEvento object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForInsert(TurniPianificaEvento object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(TurniPianificaEvento object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForDelete(TurniPianificaEvento object) {
-		return true;
-	}
 	/**
 	 * 
 	 * @param id
@@ -82,6 +62,13 @@ public class TurniPianificaEventoManager extends DbManagerStandard<TurniPianific
 			log.error(Utils.errorInMethod(e.getMessage()));
 			throw new Exception(Messages.getMessage("operation.ko"));
 		}
+	}
+
+
+	@Override
+	public boolean controllaCampiObbligatori(TurniPianificaEvento object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
+		return true;
 	}
 
 }

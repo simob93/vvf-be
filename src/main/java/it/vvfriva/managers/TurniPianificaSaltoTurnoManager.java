@@ -15,12 +15,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.TurniPianificaSaltoTurno;
 import it.vvfriva.repository.TurniPianificaSaltoTurnoRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 /**
  * 
  * @author simone
@@ -77,28 +78,11 @@ public class TurniPianificaSaltoTurnoManager extends DbManagerStandard<TurniPian
 		}
 		return data;
 	}
-
+	
 	@Override
-	public CrudRepository<TurniPianificaSaltoTurno, Integer> getRepository() {
-		return turniPianificaSaltoTurnoRepository;
-	}
-
-	@Override
-	public boolean checkCampiObbligatori(TurniPianificaSaltoTurno object) {
+	public boolean controllaCampiObbligatori(TurniPianificaSaltoTurno object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		return true;
 	}
 
-	@Override
-	public boolean checkObjectForInsert(TurniPianificaSaltoTurno object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(TurniPianificaSaltoTurno object) {
-		return true;
-	}
-	@Override
-	public boolean checkObjectForDelete(TurniPianificaSaltoTurno object) {
-		return true;
-	}
 }

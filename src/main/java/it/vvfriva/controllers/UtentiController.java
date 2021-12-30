@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Utenti;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.models.ChangePasswordModel;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.services.UtentiService;
@@ -57,7 +56,7 @@ public class UtentiController {
 	 */
 	@PostMapping("/update")
 	private @ResponseBody JsonResponse<Utenti> updateUtente(@RequestBody Utenti utente) {
-		return utentiService.saveOrUpdate(utente, DbOperation.UPDATE);
+		return utentiService.update(utente);
 	}
 	/**
 	 * eliminazione account utente

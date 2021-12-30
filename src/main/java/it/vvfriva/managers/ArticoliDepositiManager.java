@@ -13,14 +13,13 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.ArticoliDepositi;
 import it.vvfriva.repository.ArticoliDepositoRepository;
+import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
+import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 /**
@@ -28,7 +27,6 @@ import it.vvfriva.utils.Utils;
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ArticoliDepositiManager extends DbManagerStandard<ArticoliDepositi> {
 
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -38,11 +36,6 @@ public class ArticoliDepositiManager extends DbManagerStandard<ArticoliDepositi>
 	
 	@Autowired
 	EntityManager em;
-
-	@Override
-	public CrudRepository<ArticoliDepositi, Integer> getRepository() {
-		return repository;
-	}
 
 	/**
 	 * Ritorna tutti gli articoli
@@ -84,35 +77,23 @@ public class ArticoliDepositiManager extends DbManagerStandard<ArticoliDepositi>
 		return data;
 	}
 
+
 	@Override
-	public boolean checkCampiObbligatori(ArticoliDepositi object) {
+	public boolean controllaCampiObbligatori(ArticoliDepositi object, List<ResponseMessage> msg)
+			throws CustomException, Exception {
 		if (!Utils.isValidId(object.getIdArticolo())) {
 			logger.warn("Can't persist record 'ArticoliDepositi'  invalid field 'idArticolo'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory",
-					new String[] { Messages.getMessage("field.idarticolo") }));
+			msg.add(new ResponseMessage( Messages.getMessageFormatted("field.err.mandatory",
+					new String[] { Messages.getMessage("field.idarticolo") })));
 			return false;
 		}
 		if (!Utils.isValidId(object.getIdDeposito())) {
 			logger.warn("Can't persist record 'ArticoliDepositi'  invalid field 'idDeposito'");
-			addMessage(Messages.getMessageFormatted("field.err.mandatory",
-					new String[] { Messages.getMessage("field.iddeposito") }));
+			msg.add(new ResponseMessage( Messages.getMessageFormatted("field.err.mandatory",
+					new String[] { Messages.getMessage("field.iddeposito") })));
 			return false;
 		}
 		return true;
 	}
 
-	@Override
-	public boolean checkObjectForInsert(ArticoliDepositi object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForDelete(ArticoliDepositi object) {
-		return true;
-	}
-
-	@Override
-	public boolean checkObjectForUpdate(ArticoliDepositi object) {
-		return true;
-	}
 }

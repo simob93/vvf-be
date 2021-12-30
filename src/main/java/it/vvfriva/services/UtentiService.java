@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Utenti;
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.DbManagerStandard;
 import it.vvfriva.managers.UtentiManager;
 import it.vvfriva.models.ChangePasswordModel;
@@ -56,7 +55,7 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 		String pwd = SecurityService.generateRandomPasswordInt();
 		object.setPwd(bcryptEncoder.encode(pwd));
 		
-		JsonResponse<Utenti> resp = this.saveOrUpdate(object, DbOperation.INSERT);
+		JsonResponse<Utenti> resp = this.save(object);
 		if (resp != null && resp.getSuccess() == true) {
 			/*
 			 * procedo con il notificare all'utente registrato, i suoi estremi per poter
@@ -114,7 +113,7 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 				utente.setPrimoAcesso(true);
 			}
 			utente.setPwd(bcryptEncoder.encode(changePasswordModel.getNewPassword()));
-			utentiManager.dbManager(DbOperation.UPDATE, utente);
+			utentiManager.update(utente);
 
 			String content = String.format(
 					"Gentile utente <br> " + "La sua password è stata cambiata correttamente."
@@ -186,7 +185,7 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 			data = utentiManager.getObjById(id);
 			if (data != null) {
 				data.setAbilitato(attiva);
-				utentiManager.dbManager(DbOperation.UPDATE, data);
+				utentiManager.update(data);
 			}
 			message = Messages.getMessage("operation.ok");
 		} catch (Exception e) {
@@ -215,7 +214,7 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 				data.setPrimoAcesso(false);
 				String randomPwd = SecurityService.generateRandomPasswordInt();
 				data.setPwd(bcryptEncoder.encode(randomPwd));
-				utentiManager.dbManager(DbOperation.UPDATE, data);
+				utentiManager.update(data);
 				String content = String.format(
 						"Di seguito sono riportare le informazioni per accedere al gestionale: " + "<br>Nome utente: %s "
 								+ "<br>Password (Provvisoria): %s"
@@ -266,7 +265,7 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 			String newPwd = SecurityService.generateRandomPasswordInt();
 			utente.setPwd(bcryptEncoder.encode(newPwd));
 			utente.setPrimoAcesso(false);
-			utentiManager.dbManager(DbOperation.UPDATE, utente);
+			utentiManager.update(utente);
 			String content = String.format(
 					"Gentile utente, in seguito alla richiesta di recupero password, sono riportare le nuove informazioni per accedere al gestionale: "
 							+ "<br>Nome utente: %s " + "<br>Password (Provvisoria): %s"

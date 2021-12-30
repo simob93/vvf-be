@@ -7,10 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.DbManagerStandard;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.utils.CustomException;
+import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 
 /**
@@ -57,12 +57,13 @@ public abstract class DbServiceStandard<T> {
 	 * @param action
 	 * @return
 	 */
-	public JsonResponse<T> saveOrUpdate(T object, DbOperation action) {
+	public JsonResponse<T> save(T object) {
 		Boolean success = true;
 		List<ResponseMessage> message = new ArrayList<>();
 		JsonResponse<T> result = null;
 		try {
-			message = this.getManager().dbManager(action, object);
+			this.getManager().save(object);
+			message.add(new ResponseMessage(ResponseMessage.ERRORE, Messages.getMessage("operation.ok")));
 		}catch (CustomException ex) {
 			success = false;
 			object = null;
@@ -73,7 +74,35 @@ public abstract class DbServiceStandard<T> {
 		} catch (Exception e) {
 			success = false;
 			object = null;
-			//message.add(e.getMessage());
+			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
+			e.printStackTrace();
+			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
+			e.printStackTrace();
+		}finally {
+			result = new JsonResponse<T>(success, message, object);
+		}
+		return result;
+	}
+	
+	public JsonResponse<T> update(T object) {
+		Boolean success = true;
+		List<ResponseMessage> message = new ArrayList<>();
+		JsonResponse<T> result = null;
+		try {
+			this.getManager().update(object);
+			message.add(new ResponseMessage(ResponseMessage.NESSUNO,Messages.getMessage("operation.ok")));
+
+		}catch (CustomException ex) {
+			success = false;
+			object = null;
+			message = ex.getErrorList();
+			ex.printStackTrace();
+			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", ex);
+			ex.printStackTrace();
+		} catch (Exception e) {
+			success = false;
+			object = null;
+			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
 			e.printStackTrace();
 			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
 			e.printStackTrace();
@@ -94,7 +123,8 @@ public abstract class DbServiceStandard<T> {
 		List<ResponseMessage> message = new ArrayList<>();
 		JsonResponse<T> result = null;
 		try {
-			message = this.getManager().dbManager(DbOperation.DELETE, this.getManager().getObjById(id));
+			this.getManager().delete(this.getManager().getObjById(id));
+			message.add(new ResponseMessage(ResponseMessage.NESSUNO, Messages.getMessage("operation.ok")));
 		}catch (CustomException ex) {
 			success = false;
 			message = ex.getErrorList();
@@ -103,7 +133,7 @@ public abstract class DbServiceStandard<T> {
 			ex.printStackTrace();
 		} catch (Exception e) {
 			success = false;
-			message.add(new ResponseMessage(ResponseMessage.MSG_TYPE_LOUD, e.getMessage()));
+			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
 			e.printStackTrace();
 			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
 			e.printStackTrace();
