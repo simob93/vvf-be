@@ -22,7 +22,7 @@ public class ResponseMessage {
 	}
 	
 	public ResponseMessage(String testo) {
-		this.type = NESSUNO;
+		this.type = ERRORE;
 		this.testo = testo;
 	}
 	public Integer getType() {

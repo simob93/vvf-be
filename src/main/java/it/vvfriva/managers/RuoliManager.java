@@ -14,15 +14,12 @@ import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Menu;
 import it.vvfriva.entity.Ruoli;
 import it.vvfriva.entity.RuoliPermessi;
 import it.vvfriva.entity.UtentiRuoli;
-import it.vvfriva.repository.RuoliRepository;
 import it.vvfriva.utils.CostantiVVF;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
@@ -34,12 +31,10 @@ import it.vvfriva.utils.Utils;
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RuoliManager extends DbManagerStandard<Ruoli> {
 	
 	final Logger logger = LoggerFactory.getLogger(RuoliManager.class);
 
-	@Autowired private RuoliRepository repository;
 	@Autowired private UtentiRuoliManager utentiRuoliManager;
 	@Autowired private RuoliPermessiManager ruoliPermessiManager;
 	@Autowired private MenuManager menuManager;

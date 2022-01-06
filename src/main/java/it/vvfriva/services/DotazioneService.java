@@ -1,8 +1,6 @@
 package it.vvfriva.services;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +9,11 @@ import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Dotazione;
 import it.vvfriva.managers.DotazioneManager;
+import it.vvfriva.models.DotazioneDto;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.models.KeyValueDate;
 import it.vvfriva.models.ModelDotazionePortlet;
 import it.vvfriva.utils.Messages;
-import it.vvfriva.utils.Utils;
 
 /**
  * 
@@ -46,11 +44,7 @@ public class DotazioneService extends DbServiceStandard<Dotazione> {
 		String message = "";
 		List<KeyValueDate> data = null;
 		try {
-			List<Dotazione> listDotazioni = this.getManager().list(idVigile);
-			if (!Utils.isEmptyList(listDotazioni)) {
-				data = listDotazioni.stream().map(dotazione -> new KeyValueDate(dotazione.getId(),
-						dotazione.getDescrArticolo(), null, dotazione.getDataConsegna())).collect(Collectors.toList());
-			}
+			data = this.getManager().listKeyValueDate(idVigile);
 			message = Messages.getMessage("search.ok");
 		} catch (Exception e) {
 			message = Messages.getMessage("search.ko");
@@ -69,13 +63,7 @@ public class DotazioneService extends DbServiceStandard<Dotazione> {
 		String message = "";
 		List<ModelDotazionePortlet> data = null;
 		try {
-			List<Dotazione> listDotazioni = this.getManager().listForPortlet(idVigile);
-			if (!Utils.isEmptyList(listDotazioni)) {
-				data = new ArrayList<ModelDotazionePortlet>();
-				for (Dotazione dotazione : listDotazioni) {
-					data.add(new ModelDotazionePortlet(dotazione.getDescrArticolo(), dotazione.getDataConsegna()));
-				}
-			}
+			data = this.getManager().listForPortlet(idVigile);
 			message = Messages.getMessage("search.ok");
 		} catch (Exception e) {
 			message = Messages.getMessage("search.ko");
@@ -84,6 +72,25 @@ public class DotazioneService extends DbServiceStandard<Dotazione> {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".listForPortlet ", e.getMessage());
 		} finally {
 			result = new JsonResponse<List<ModelDotazionePortlet>>(success, message, data);
+		}
+		return result;
+	}
+	
+	public JsonResponse<DotazioneDto> getDotazione(Integer id) {
+		JsonResponse<DotazioneDto> result = null;
+		Boolean success = true;
+		String message = "";
+		DotazioneDto data = null;
+		try {
+			data = this.getManager().getDotazione(id);
+			message = Messages.getMessage("search.ok");
+		} catch (Exception e) {
+			message = Messages.getMessage("search.ko");
+			success = false;
+			e.printStackTrace();
+			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".listForPortlet ", e.getMessage());
+		} finally {
+			result = new JsonResponse<DotazioneDto>(success, message, data);
 		}
 		return result;
 	}

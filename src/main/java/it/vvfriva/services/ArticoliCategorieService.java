@@ -96,7 +96,7 @@ public class ArticoliCategorieService extends DbServiceStandard<ArticoliCategori
 			logger.error(Utils.errorInMethod(e.getMessage()));
 		} finally {
 			if (success) {
-				msg.add(new ResponseMessage(ResponseMessage.ERRORE, message));
+				msg.add(new ResponseMessage(ResponseMessage.NESSUNO, message));
 			}
 			result = new JsonResponse<Boolean>(success, msg, null);
 		}

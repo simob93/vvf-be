@@ -13,8 +13,6 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.TurniPianifica;
@@ -29,7 +27,6 @@ import it.vvfriva.utils.Utils;
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TurniPianificaManager extends DbManagerStandard<TurniPianifica>  {
 	private final Logger log = LoggerFactory.getLogger(TurniPianificaManager.class);
 

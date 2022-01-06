@@ -10,8 +10,6 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Provincie;
@@ -23,7 +21,6 @@ import it.vvfriva.utils.Messages;
  *
  */
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ProvinciaManager {
     
 	final Logger logger = LoggerFactory.getLogger(this.getClass());

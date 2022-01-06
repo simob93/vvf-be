@@ -32,6 +32,7 @@ import it.vvfriva.entity.VigileCertificati;
 import it.vvfriva.entity.VigilePatenti;
 import it.vvfriva.enums.DbOperation;
 import it.vvfriva.managers.VigileManager;
+import it.vvfriva.models.DotazioneDto;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.models.KeyValueDate;
 import it.vvfriva.models.KeyValueTipiScadenza;
@@ -309,8 +310,8 @@ public class VigileController {
 	}
 	
 	@GetMapping("/dotazione/get")
-	public @ResponseBody JsonResponse<Dotazione> get(@RequestParam("id") Integer id) {
-		return dotazioneService.getObjectById(id);
+	public @ResponseBody JsonResponse<DotazioneDto> get(@RequestParam("id") Integer id) {
+		return dotazioneService.getDotazione(id);
 	}
 	/**
 	 * 

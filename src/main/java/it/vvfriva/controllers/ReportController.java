@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import it.vvfriva.entity.Dotazione;
 import it.vvfriva.managers.DotazioneManager;
+import it.vvfriva.models.DotazioneDto;
 import it.vvfriva.models.ModelPrntDotazioneVigile;
 import it.vvfriva.utils.ReportService;
 import it.vvfriva.utils.Utils;
@@ -39,10 +40,10 @@ public class ReportController {
 		try {
 			OutputStream out = response.getOutputStream();
 			 Map<String, Object> parameters = new HashMap<String, Object>();
-			 List<Dotazione> dotazioniVigile = dotazioneVigileManger.list(idVigile);
+			 List<DotazioneDto> dotazioniVigile = dotazioneVigileManger.listDotazioni(idVigile);
 			 List<Object> listForReport = new ArrayList<Object>();
 			 if (!Utils.isEmptyList(dotazioniVigile)) {
-				 for(Dotazione dotazione: dotazioniVigile) {
+				 for(DotazioneDto dotazione: dotazioniVigile) {
 						listForReport
 								.add(new ModelPrntDotazioneVigile(dotazione.getDescrArticolo(), dotazione.getQuantita(),
 										dotazione.getTaglia(), Utils.parseDate(dotazione.getDataConsegna()), dotazione.getNote()));

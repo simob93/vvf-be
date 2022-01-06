@@ -3,8 +3,6 @@ package it.vvfriva.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +27,6 @@ import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UtentiService extends DbServiceStandard<Utenti> {
 
 	
@@ -55,7 +52,7 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 		String pwd = SecurityService.generateRandomPasswordInt();
 		object.setPwd(bcryptEncoder.encode(pwd));
 		
-		JsonResponse<Utenti> resp = this.save(object);
+		JsonResponse<Utenti> resp = super.save(object);
 		if (resp != null && resp.getSuccess() == true) {
 			/*
 			 * procedo con il notificare all'utente registrato, i suoi estremi per poter

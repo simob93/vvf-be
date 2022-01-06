@@ -23,7 +23,6 @@ import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 @Service
-@Transactional(rollbackFor = Exception.class)
 public abstract class DbManagerStandard<T>  implements IDBManagerOperation<T> {
 	
 	

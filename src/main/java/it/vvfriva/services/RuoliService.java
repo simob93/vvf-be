@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Ruoli;
@@ -19,7 +17,6 @@ import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.Utils;
 
 @Service
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RuoliService extends DbServiceStandard<Ruoli> {
 	final Logger logger = LoggerFactory.getLogger(RuoliService.class);
 	
