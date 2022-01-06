@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import it.vvfriva.entity.Dotazione;
 import it.vvfriva.managers.DotazioneManager;
 import it.vvfriva.models.DotazioneDto;
 import it.vvfriva.models.ModelPrntDotazioneVigile;

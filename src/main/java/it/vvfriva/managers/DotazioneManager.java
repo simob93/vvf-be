@@ -144,8 +144,6 @@ public class DotazioneManager extends DbManagerStandard<Dotazione> {
 		List<ModelDotazionePortlet> result = new ArrayList<ModelDotazionePortlet>();
 		try {
 
-//			List<Dotazione> elencoDotazioni = (List<Dotazione>) repository.findAll();
-
 			CriteriaBuilder cb = em.getCriteriaBuilder();
 			CriteriaQuery<Dotazione> cr = cb.createQuery(Dotazione.class);
 			Root<Dotazione> root = cr.from(Dotazione.class);
