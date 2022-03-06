@@ -180,8 +180,7 @@ public class DotazioneManager extends DbManagerStandard<Dotazione> {
 	}
 
 	@Override
-	public boolean controllaCampiObbligatori(Dotazione object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Dotazione object, List<ResponseMessage> msg) {
 
 		if (!Utils.isValidId(object.getIdVigile())) {
 			logger.warn("Cant' persist record invalid field 'idVigile'");

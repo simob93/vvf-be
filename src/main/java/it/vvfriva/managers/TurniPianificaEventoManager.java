@@ -63,8 +63,7 @@ public class TurniPianificaEventoManager extends DbManagerStandard<TurniPianific
 
 
 	@Override
-	public boolean controllaCampiObbligatori(TurniPianificaEvento object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(TurniPianificaEvento object, List<ResponseMessage> msg) {
 		return true;
 	}
 

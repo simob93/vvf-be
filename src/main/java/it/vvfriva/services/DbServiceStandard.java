@@ -1,17 +1,11 @@
 package it.vvfriva.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.managers.DbManagerStandard;
 import it.vvfriva.models.JsonResponse;
-import it.vvfriva.utils.CustomException;
-import it.vvfriva.utils.Messages;
-import it.vvfriva.utils.ResponseMessage;
 
 /**
  * 
@@ -34,21 +28,8 @@ public abstract class DbServiceStandard<T> {
 	 * @return
 	 */
 	public JsonResponse<T> getObjectById(Integer id) {
-		Boolean success = true;
-		T data = null;
-		List<ResponseMessage> message = new ArrayList<>();
-		JsonResponse<T> result = null;
-		try {
-			data = this.getManager().getObjById(id);
-		} catch (Exception e) {
-			success = false;
-			e.printStackTrace();
-			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
-			e.printStackTrace();
-		} finally {
-			result = new JsonResponse<T>(success, message, data);
-		}
-		return result;
+		T data = this.getManager().getObjById(id);
+		return new JsonResponse<T>(true,  data);
 	}
 	
 	/** 
@@ -58,58 +39,17 @@ public abstract class DbServiceStandard<T> {
 	 * @return
 	 */
 	public JsonResponse<T> save(T object) {
-		Boolean success = true;
-		List<ResponseMessage> message = new ArrayList<>();
-		JsonResponse<T> result = null;
-		try {
-			this.getManager().save(object);
-			message.add(new ResponseMessage(ResponseMessage.ERRORE, Messages.getMessage("operation.ok")));
-		}catch (CustomException ex) {
-			success = false;
-			object = null;
-			message = ex.getErrorList();
-			ex.printStackTrace();
-			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", ex);
-			ex.printStackTrace();
-		} catch (Exception e) {
-			success = false;
-			object = null;
-			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
-			e.printStackTrace();
-			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
-			e.printStackTrace();
-		}finally {
-			result = new JsonResponse<T>(success, message, object);
-		}
-		return result;
+		this.getManager().save(object);
+		return new JsonResponse<T>(true, object);
 	}
-	
+	/**
+	 * 
+	 * @param object
+	 * @return
+	 */
 	public JsonResponse<T> update(T object) {
-		Boolean success = true;
-		List<ResponseMessage> message = new ArrayList<>();
-		JsonResponse<T> result = null;
-		try {
-			this.getManager().update(object);
-			message.add(new ResponseMessage(ResponseMessage.NESSUNO,Messages.getMessage("operation.ok")));
-
-		}catch (CustomException ex) {
-			success = false;
-			object = null;
-			message = ex.getErrorList();
-			ex.printStackTrace();
-			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", ex);
-			ex.printStackTrace();
-		} catch (Exception e) {
-			success = false;
-			object = null;
-			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
-			e.printStackTrace();
-			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
-			e.printStackTrace();
-		}finally {
-			result = new JsonResponse<T>(success, message, object);
-		}
-		return result;
+		this.getManager().update(object);
+		return new JsonResponse<T>(true, null);
 	}
 	/**
 	 * 
@@ -118,31 +58,7 @@ public abstract class DbServiceStandard<T> {
 	 * @return
 	 */
 	public JsonResponse<T> delete(Integer id) {
-		
-		Boolean success = true;
-		List<ResponseMessage> message = new ArrayList<>();
-		JsonResponse<T> result = null;
-		try {
-			this.getManager().delete(this.getManager().getObjById(id));
-			message.add(new ResponseMessage(ResponseMessage.NESSUNO, Messages.getMessage("operation.ok")));
-		}catch (CustomException ex) {
-			success = false;
-			message = ex.getErrorList();
-			ex.printStackTrace();
-			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", ex);
-			ex.printStackTrace();
-		} catch (Exception e) {
-			success = false;
-			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
-			e.printStackTrace();
-			logger.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
-			e.printStackTrace();
-		}finally {
-			result = new JsonResponse<T>(success, message, null);
-		}
-		return result;
-		
+		this.getManager().delete(this.getManager().getObjById(id));
+		return new JsonResponse<T>(true, null);
 	}
-	
-	
 }

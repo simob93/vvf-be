@@ -49,7 +49,7 @@ public class MansioniManager extends DbManagerStandard<Mansioni> {
 	 * @param idVigile       -identificativo del vigile
 	 * @param dal            - dal
 	 * @param al             - al
-	 * @param idToExlcude    - possibilità di eslcudere una particolare registrazione
+	 * @param idToExlcude    - possibilita di eslcudere una particolare registrazione
 	 * @return filtra la tabella per una serie di parametri passati 
 	 * @throws CustomException
 	 */
@@ -95,8 +95,7 @@ public class MansioniManager extends DbManagerStandard<Mansioni> {
 	}
 
 	@Override
-	public boolean controllaCampiObbligatori(Mansioni object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Mansioni object, List<ResponseMessage> msg) {
 		if (!Utils.isValidDate(object.getDal())) {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid filed data dal");
 			msg.add(new ResponseMessage("Campo data dal obbligatorio"));

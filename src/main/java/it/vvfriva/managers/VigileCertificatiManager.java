@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.VigileCertificati;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.models.KeyValueTipiScadenza;
 import it.vvfriva.models.ModelPortletVigileCertificati;
 import it.vvfriva.models.ModelPrntAutorizzazioni;
@@ -59,32 +60,26 @@ public class VigileCertificatiManager extends DbManagerStandard<VigileCertificat
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public List<VigileCertificati> list(Integer idVigile, Boolean onlyEnableExpiry) throws Exception {
+	public List<VigileCertificati> list(Integer idVigile, Boolean onlyEnableExpiry) {
 		
 		if (!Utils.isValidId(idVigile)) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(Messages.getMessage("search.ko")).append(": ")
 			.append(Messages.getMessageFormatted("field.err.mandatory",  new String[] {"idVigile"}));
-			throw new Exception(sb.toString());
+			throw new UserFriendlyException(sb.toString());
 		}
 		List<VigileCertificati> data = null;
-		try {
-			String query = "select new it.vvfriva.entity.VigileCertificati(c.id, c.idVigile, c.idPerson, c.date, p.name) From VigileCertificati c join Person p on p.id = c.idPerson and c.idVigile = :idVigile";
-			if (onlyEnableExpiry) {
-				query += " and  p.enabledExpiry = :enable";
-			}
-			Query cb = em.createQuery(query);
-			cb.setParameter("idVigile", idVigile);
-
-			if (onlyEnableExpiry) {
-				cb.setParameter("enable", CostantiVVF.ACTIVE);
-			}
-			data = cb.getResultList();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("Exception in function: " + this.getClass().getCanonicalName()+ ".list", e);
+		String query = "select new it.vvfriva.entity.VigileCertificati(c.id, c.idVigile, c.idPerson, c.date, p.name) From VigileCertificati c join Person p on p.id = c.idPerson and c.idVigile = :idVigile";
+		if (onlyEnableExpiry) {
+			query += " and  p.enabledExpiry = :enable";
 		}
+		Query cb = em.createQuery(query);
+		cb.setParameter("idVigile", idVigile);
+
+		if (onlyEnableExpiry) {
+			cb.setParameter("enable", CostantiVVF.ACTIVE);
+		}
+		data = cb.getResultList();
 		return data;
 		
 	}
@@ -97,21 +92,14 @@ public class VigileCertificatiManager extends DbManagerStandard<VigileCertificat
 	 * @return
 	 * @throws Exception
 	 */
-	public List<KeyValueTipiScadenza> getCbox(Integer idVigile, Boolean onlyEnableExpiry) throws Exception {
+	public List<KeyValueTipiScadenza> getCbox(Integer idVigile, Boolean onlyEnableExpiry) {
 		List<KeyValueTipiScadenza> data = new ArrayList<KeyValueTipiScadenza>();
-		try {
-			List<VigileCertificati> listVigileCertificati = this.list(idVigile, onlyEnableExpiry);
-			if (!Utils.isEmptyList(listVigileCertificati)) {
-				listVigileCertificati.forEach(patente -> {
-					data.add(new KeyValueTipiScadenza(patente.getId(), patente.getDescrPerson(), null,
-							patente.getIdVigile(), patente.getIdPerson()));
-				});
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("Exception in function: " + this.getClass().getCanonicalName() + ".getCbox ", e);
-			throw new CustomException(Messages.getMessage("search.ko"));
+		List<VigileCertificati> listVigileCertificati = this.list(idVigile, onlyEnableExpiry);
+		if (!Utils.isEmptyList(listVigileCertificati)) {
+			listVigileCertificati.forEach(patente -> {
+				data.add(new KeyValueTipiScadenza(patente.getId(), patente.getDescrPerson(), null,
+						patente.getIdVigile(), patente.getIdPerson()));
+			});
 		}
 		return data;
 	}
@@ -201,8 +189,7 @@ public class VigileCertificatiManager extends DbManagerStandard<VigileCertificat
 
 
 	@Override
-	public boolean controllaCampiObbligatori(VigileCertificati object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(VigileCertificati object, List<ResponseMessage> msg) {
 		/*
 		 * sono neccessari al fine di un insermiento ok! i campi numero patente
 		 * solitamente alfanumerico data di svolgimento patente e tipologia di patete
@@ -233,7 +220,7 @@ public class VigileCertificatiManager extends DbManagerStandard<VigileCertificat
 		return true;
 	}
 	@Override
-	public void operazioneDopoInserimento(VigileCertificati object) throws Exception, CustomException {
+	public void operazioneDopoInserimento(VigileCertificati object) {
 		if (Utils.isValidDate(object.getDateExpiration())) {
 			scadenzeManager.insertExp(object.getId(), object.getDate(), 
 					object.getDateExpiration(), CostantiVVF.AREA_AUTORIZZAZIONI, object.getIdVigile());

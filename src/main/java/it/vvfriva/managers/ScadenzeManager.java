@@ -36,7 +36,6 @@ import it.vvfriva.models.KeyValueTipiScadenza;
 import it.vvfriva.models.VigileModel;
 import it.vvfriva.repository.ScadenzeRepository;
 import it.vvfriva.utils.CostantiVVF;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -45,8 +44,6 @@ import it.vvfriva.utils.Utils;
 public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	
 	final Logger log = LoggerFactory.getLogger(this.getClass());
-	
-	private @Autowired AutowireCapableBeanFactory beanFactory;
 	
 	@Autowired
 	ScadenzeRepository repository;
@@ -81,7 +78,7 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	 * @return ritorna una lista di scadenze filtrate per i parametri in ingresso
 	 * @throws Exception
 	 */
-	public List<Scadenze> listAll(Integer idVigile, Date from, Date to, List<Integer> idArea, Boolean storico) throws Exception {
+	public List<Scadenze> listAll(Integer idVigile, Date from, Date to, List<Integer> idArea, Boolean storico)  {
 		return listAll(idVigile, from, to, idArea, storico, null);
 	}
 	/**
@@ -94,72 +91,63 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Scadenze> listAll(Integer idVigile, Date from, Date to, List<Integer> idArea, Boolean storico, Sort sort) throws Exception {
+	public List<Scadenze> listAll(Integer idVigile, Date from, Date to, List<Integer> idArea, Boolean storico, Sort sort) {
 		
 		List<Scadenze> data = null;
 		storico = Utils.coalesce(storico, false);
-		
-		try {
-			
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-		    CriteriaQuery<Scadenze> cq = cb.createQuery(Scadenze.class);
-		 
-		    Root<Scadenze> scad = cq.from(Scadenze.class);
-		    List<Predicate> predList = new ArrayList<Predicate>();
-		    
-		    predList.add((cb.or(
-    			cb.isNull(scad.get("renew")),
-    			cb.equal(scad.get("renew"), storico ? 1 : 0)
-			)));
-		    
-		    if (Utils.isValidDate(to)) {
-		    	to = Utils.startOfDay(to);
-		    	predList.add(cb.lessThanOrEqualTo(scad.get("dateFrom"), to));
-		    }
-		    
-		    if (Utils.isValidDate(from)) {
-		    	from = Utils.startOfDay(from);
-		    	predList.add(
-	    			cb.or(
-    					cb.greaterThanOrEqualTo(scad.get("dateExpiration"), from),
-    					cb.isNull(scad.get("dateExpiration"))
-    				)
-    			);
-		    }
-		    if (!Utils.isEmptyList(idArea)) {
-		    	In<Integer> inClause = cb.in(scad.get("idArea"));
-		    	for (Integer area : idArea) {
-		    		inClause.value(area);
-		    	}
-		    	predList.add(inClause);
-		    }
-		    predList.add(cb.equal(scad.get("idVigile"), idVigile));
-		    cq.where(predList.toArray(new Predicate[predList.size()]));
-		    cq.orderBy(cb.asc(scad.get("idArea")), cb.asc(scad.get("dateExpiration")));
-		    
-		    data = em.createQuery(cq).getResultList();	  
-		    
-			if (!Utils.isEmptyList(data)) {
-				for (Scadenze scadenza : data) {
-					
-					if (scadenza.getIdArea().compareTo(CostantiVVF.AREA_PATENTI_SERVIZIO) == 0) {
-						VigilePatenti vgilePatente = vigilePatentiManager.getObjById(scadenza.getIdRiferimento());
-						scadenza.setDescrFormatted(vgilePatente.getDescrPerson());
-						scadenza.setIdPerson(vgilePatente.getIdPerson());
-					}
-					
-					if (scadenza.getIdArea().compareTo(CostantiVVF.AREA_AUTORIZZAZIONI) == 0) {
-						VigileCertificati vigileCertificato = vigileCertificatiManager.getObjById(scadenza.getIdRiferimento());
-						scadenza.setDescrFormatted(vigileCertificato.getDescrPerson());
-						scadenza.setIdPerson(vigileCertificato.getIdPerson());
-					}
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+	    CriteriaQuery<Scadenze> cq = cb.createQuery(Scadenze.class);
+	 
+	    Root<Scadenze> scad = cq.from(Scadenze.class);
+	    List<Predicate> predList = new ArrayList<Predicate>();
+	    
+	    predList.add((cb.or(
+			cb.isNull(scad.get("renew")),
+			cb.equal(scad.get("renew"), storico ? 1 : 0)
+		)));
+	    
+	    if (Utils.isValidDate(to)) {
+	    	to = Utils.startOfDay(to);
+	    	predList.add(cb.lessThanOrEqualTo(scad.get("dateFrom"), to));
+	    }
+	    
+	    if (Utils.isValidDate(from)) {
+	    	from = Utils.startOfDay(from);
+	    	predList.add(
+    			cb.or(
+					cb.greaterThanOrEqualTo(scad.get("dateExpiration"), from),
+					cb.isNull(scad.get("dateExpiration"))
+				)
+			);
+	    }
+	    if (!Utils.isEmptyList(idArea)) {
+	    	In<Integer> inClause = cb.in(scad.get("idArea"));
+	    	for (Integer area : idArea) {
+	    		inClause.value(area);
+	    	}
+	    	predList.add(inClause);
+	    }
+	    predList.add(cb.equal(scad.get("idVigile"), idVigile));
+	    cq.where(predList.toArray(new Predicate[predList.size()]));
+	    cq.orderBy(cb.asc(scad.get("idArea")), cb.asc(scad.get("dateExpiration")));
+	    
+	    data = em.createQuery(cq).getResultList();	  
+	    
+		if (!Utils.isEmptyList(data)) {
+			for (Scadenze scadenza : data) {
+				
+				if (scadenza.getIdArea().compareTo(CostantiVVF.AREA_PATENTI_SERVIZIO) == 0) {
+					VigilePatenti vgilePatente = vigilePatentiManager.getObjById(scadenza.getIdRiferimento());
+					scadenza.setDescrFormatted(vgilePatente.getDescrPerson());
+					scadenza.setIdPerson(vgilePatente.getIdPerson());
+				}
+				
+				if (scadenza.getIdArea().compareTo(CostantiVVF.AREA_AUTORIZZAZIONI) == 0) {
+					VigileCertificati vigileCertificato = vigileCertificatiManager.getObjById(scadenza.getIdRiferimento());
+					scadenza.setDescrFormatted(vigileCertificato.getDescrPerson());
+					scadenza.setIdPerson(vigileCertificato.getIdPerson());
 				}
 			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("Excpetion in function: " + this.getClass().getCanonicalName() + ".listAll", e);
-			throw new Exception(Messages.getMessage("search.ko"));
 		}
 		return data;
 	}
@@ -289,67 +277,61 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	 * @return json tabel
 	 * @throws Exception
 	 */
-	public String cal() throws Exception {
+	public String cal() {
 		String result = "";
-		try {
-			//attivi non - attivi - in attesa
-			List<VigileModel> listaVigili = vigileManager.list();
-			List<Person> listPerson = personManager.list(Arrays.asList(CostantiVVF.AREA_PATENTI_SERVIZIO, CostantiVVF.AREA_AUTORIZZAZIONI), null, null, false);
-			
-			//json da manadare alla gui
-			JsonArray jsonArray = new JsonArray();
-			
-			//per ogni vigile
-			
-			if (!Utils.isEmptyList(listaVigili)) {
-				for (VigileModel vigile: listaVigili) {
-					JsonObject jObj = new JsonObject();
-					jObj.addProperty("idVigile", vigile.getId());
-					jObj.addProperty("nominativo", vigile.getFirstName() + " " + vigile.getLastName());
-					
-					List<Integer> idPersonCerrificati = 
-							vigileCertificatiManager.getCbox(vigile.getId(), false)
-							.stream()
-							.map(certificato -> certificato.getIdPerson())
-							.collect(Collectors.toList());
-							
-					//scadenze del vigile
-					
-					List<Scadenze> listScadenze = this.listAll(vigile.getId(), Utils.encodeDate(1899, 12, 31), Utils.endOfDay(new Date()), null, null);
-					for(Person person: listPerson) {
-						/*
-						 * se non � abilita la scadenza verifico se il vigile possiede l'autorizzazione
-						 * e la includo nella gestione come abilitata
-						 */
-						JsonObject jsonScadeza = null; 
-						if (!person.getEnabledExpiry()) {
-							if (idPersonCerrificati.contains(person.getId())) {
-								jsonScadeza = new JsonObject(); 
-								jsonScadeza.addProperty("stato", CostantiVVF.EVENTO_VALIDO);
-
-							}
-						}
-						jObj.add(CostantiVVF.pref_prs + person.getId().toString() ,jsonScadeza);
-					}
-								
-					
-					for (Scadenze scadenza: listScadenze) {
-
-						JsonObject jsonScadeza = new JsonObject(); 
-						jsonScadeza.addProperty("stato", scadenza.getStato());
-						jsonScadeza.addProperty("dateExpiration", scadenza.getDateExpirationFormatted());
-						jObj.add(CostantiVVF.pref_prs + scadenza.getIdPerson().toString(), jsonScadeza);
+		//attivi non - attivi - in attesa
+		List<VigileModel> listaVigili = vigileManager.list();
+		List<Person> listPerson = personManager.list(Arrays.asList(CostantiVVF.AREA_PATENTI_SERVIZIO, CostantiVVF.AREA_AUTORIZZAZIONI), null, null, false);
+		
+		//json da manadare alla gui
+		JsonArray jsonArray = new JsonArray();
+		
+		//per ogni vigile
+		
+		if (!Utils.isEmptyList(listaVigili)) {
+			for (VigileModel vigile: listaVigili) {
+				JsonObject jObj = new JsonObject();
+				jObj.addProperty("idVigile", vigile.getId());
+				jObj.addProperty("nominativo", vigile.getFirstName() + " " + vigile.getLastName());
+				
+				List<Integer> idPersonCerrificati = 
+						vigileCertificatiManager.getCbox(vigile.getId(), false)
+						.stream()
+						.map(certificato -> certificato.getIdPerson())
+						.collect(Collectors.toList());
 						
+				//scadenze del vigile
+				
+				List<Scadenze> listScadenze = this.listAll(vigile.getId(), Utils.encodeDate(1899, 12, 31), Utils.endOfDay(new Date()), null, null);
+				for(Person person: listPerson) {
+					/*
+					 * se non � abilita la scadenza verifico se il vigile possiede l'autorizzazione
+					 * e la includo nella gestione come abilitata
+					 */
+					JsonObject jsonScadeza = null; 
+					if (!person.getEnabledExpiry()) {
+						if (idPersonCerrificati.contains(person.getId())) {
+							jsonScadeza = new JsonObject(); 
+							jsonScadeza.addProperty("stato", CostantiVVF.EVENTO_VALIDO);
+
+						}
 					}
-					jsonArray.add(jObj);
+					jObj.add(CostantiVVF.pref_prs + person.getId().toString() ,jsonScadeza);
 				}
+							
+				
+				for (Scadenze scadenza: listScadenze) {
+
+					JsonObject jsonScadeza = new JsonObject(); 
+					jsonScadeza.addProperty("stato", scadenza.getStato());
+					jsonScadeza.addProperty("dateExpiration", scadenza.getDateExpirationFormatted());
+					jObj.add(CostantiVVF.pref_prs + scadenza.getIdPerson().toString(), jsonScadeza);
+					
+				}
+				jsonArray.add(jObj);
 			}
-			result = jsonArray.toString();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			log.error("Exception in function: " + this.getClass().getCanonicalName() + ".calc", ex);
-			throw new Exception(Messages.getMessage("search.ko"));
 		}
+		result = jsonArray.toString();
 		return result;
 	}
 	/**
@@ -362,24 +344,16 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	 * @return
 	 * @throws Exception 
 	 */
-	public Scadenze insertExp(Integer idRiferimento, Date dateFrom, Date dateExipration, Integer idArea, Integer idVigile) throws Exception {
+	public Scadenze insertExp(Integer idRiferimento, Date dateFrom, Date dateExipration, Integer idArea, Integer idVigile) { 
 		Scadenze scadenza = null;
-		try {
-			
-			scadenza = new Scadenze();
-			scadenza.setDateFrom(dateFrom);
-			scadenza.setDate(new Date());
-			scadenza.setDateExpiration(dateExipration);
-			scadenza.setIdArea(idArea);
-			scadenza.setIdRiferimento(idRiferimento);
-			scadenza.setIdVigile(idVigile);
-			this.save(scadenza);
-			
-		} catch (CustomException ex) {
-			ex.printStackTrace();
-			log.error("Exception in function: " + this.getClass().getCanonicalName() + ".insertExp", ex);
-			throw new CustomException(ex.getErrorList());
-		}
+		scadenza = new Scadenze();
+		scadenza.setDateFrom(dateFrom);
+		scadenza.setDate(new Date());
+		scadenza.setDateExpiration(dateExipration);
+		scadenza.setIdArea(idArea);
+		scadenza.setIdRiferimento(idRiferimento);
+		scadenza.setIdVigile(idVigile);
+		this.save(scadenza);
 		return scadenza;
 	}
 	
@@ -392,49 +366,41 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	 * @return
 	 * @throws Exception
 	 */
-	private Scadenze getLastFrom(Date date, Integer idRiferimento, Integer idArea, Integer renew) throws Exception {
+	private Scadenze getLastFrom(Date date, Integer idRiferimento, Integer idArea, Integer renew) {
 		List<Scadenze> data = null;
-		try {
-			
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-		    CriteriaQuery<Scadenze> cq = cb.createQuery(Scadenze.class);
-		 
-		    Root<Scadenze> scad = cq.from(Scadenze.class);
-		    List<Predicate> predList = new ArrayList<Predicate>();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+	    CriteriaQuery<Scadenze> cq = cb.createQuery(Scadenze.class);
+	 
+	    Root<Scadenze> scad = cq.from(Scadenze.class);
+	    List<Predicate> predList = new ArrayList<Predicate>();
 
-		    if (!Utils.isValidId(renew)) {
-				predList.add((cb.or(
-						cb.isNull(scad.get("renew")),
-						cb.equal(scad.get("renew"), 0)
-				)));
-			} else {
-		    	predList.add(cb.equal(scad.get("renew"), 1));
-			}
-		    
-		    if (Utils.isValidDate(date)) {
-		    	predList.add(cb.lessThan(scad.get("dateFrom"), date));
-		    }
-		    
-		    if (Utils.isValidId(idRiferimento)) {
-		    	predList.add(cb.equal(scad.get("idRiferimento"), idRiferimento));
-		    }
-		    
-		    if (Utils.isValidId(idArea)) {
-		    	predList.add(cb.equal(scad.get("idArea"), idArea));
-		    }
-		    
-		    cq.where(predList.toArray(new Predicate[predList.size()]));
-		    cq.orderBy(cb.desc(scad.get("dateFrom")));
-		    
-		    data = em.createQuery(cq)
-		    		.setMaxResults(1)
-	    			.getResultList();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("Exception in function" + this.getClass().getCanonicalName() + "getLastFrom", e);
-			throw new Exception(Messages.getMessage("search.ko"));
+	    if (!Utils.isValidId(renew)) {
+			predList.add((cb.or(
+					cb.isNull(scad.get("renew")),
+					cb.equal(scad.get("renew"), 0)
+			)));
+		} else {
+	    	predList.add(cb.equal(scad.get("renew"), 1));
 		}
+	    
+	    if (Utils.isValidDate(date)) {
+	    	predList.add(cb.lessThan(scad.get("dateFrom"), date));
+	    }
+	    
+	    if (Utils.isValidId(idRiferimento)) {
+	    	predList.add(cb.equal(scad.get("idRiferimento"), idRiferimento));
+	    }
+	    
+	    if (Utils.isValidId(idArea)) {
+	    	predList.add(cb.equal(scad.get("idArea"), idArea));
+	    }
+	    
+	    cq.where(predList.toArray(new Predicate[predList.size()]));
+	    cq.orderBy(cb.desc(scad.get("dateFrom")));
+	    
+	    data = em.createQuery(cq)
+	    		.setMaxResults(1)
+    			.getResultList();
 		return Utils.isEmptyList(data) ? null : data.get(0);
 	}
 	/**
@@ -512,8 +478,7 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	}
 	
 	@Override
-	public boolean controllaCampiObbligatori(Scadenze object, List<ResponseMessage> msg) 
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Scadenze object, List<ResponseMessage> msg)  {
 		if (!Utils.isValidDate(object.getDateFrom())) {
 			log.error("Can't persist record invalid field 'expiration date'");
 			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {"expiration date"})));
@@ -529,7 +494,7 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	}
 	
 	@Override
-	public void operazioneDopoInserimento(Scadenze object) throws Exception, CustomException {
+	public void operazioneDopoInserimento(Scadenze object) {
 		Scadenze scadenza = getLastFrom(object.getDateFrom(), object.getIdRiferimento(), object.getIdArea(), 0);
 		if (scadenza != null) {
 			scadenza.setUpdateData(new Date());
@@ -538,7 +503,7 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 		}
 	}
 	@Override
-	public void operazionePrimaDiCancellare(Scadenze object) throws Exception, CustomException {
+	public void operazionePrimaDiCancellare(Scadenze object) {
 		Scadenze scadenza = getLastFrom(object.getDateFrom(), object.getIdRiferimento(), object.getIdArea(), 1);
 		if (scadenza != null) {
 			scadenza.setRenew(null);

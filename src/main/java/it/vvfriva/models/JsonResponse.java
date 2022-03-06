@@ -11,6 +11,14 @@ public class JsonResponse<T> {
 	private List<ResponseMessage> message;
 	private T data;
 	
+	public JsonResponse() {
+	}
+	
+	public JsonResponse(Boolean success, T data) {
+		this.success = success;
+		this.data = data;
+	}
+	
 	public JsonResponse(Boolean success, String msg, T data) {
 		this.success = success;
 		this.message = createArrayMsg(msg);
@@ -23,7 +31,7 @@ public class JsonResponse<T> {
 		this.data = data;
 	}
 
-	private List<ResponseMessage> createArrayMsg(String msg) {
+	public List<ResponseMessage> createArrayMsg(String msg) {
 		List<ResponseMessage> list = new ArrayList<ResponseMessage>();
 		if (success == false) {
 			list.add(new ResponseMessage(ResponseMessage.ERRORE, msg));

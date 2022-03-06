@@ -53,7 +53,7 @@ public class AssenzeManager extends DbManagerStandard<Assenze> {
 	 * @param idVigile    - identificativo del vigile
 	 * @param dal         - da 
 	 * @param al          - a
-	 * @param idToExlcude - possibilità di escludere un particolare id assenza 
+	 * @param idToExlcude - possibilitï¿½ di escludere un particolare id assenza 
 	 * @return
 	 * @throws CustomException
 	 */
@@ -146,8 +146,7 @@ public class AssenzeManager extends DbManagerStandard<Assenze> {
 	}
 
 	@Override
-	public boolean controllaCampiObbligatori(Assenze object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Assenze object, List<ResponseMessage> msg){
 		if (!Utils.isValidDate(object.getDal())) {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".controllaCampiObbligatori invalid filed data dal");
 			msg.add(new ResponseMessage("Campo data dal obbligatorio"));
@@ -163,7 +162,7 @@ public class AssenzeManager extends DbManagerStandard<Assenze> {
 			List<Assenze> listAssenze = this.listBy(object.getIdVigile(), object.getDal(), object.getAl(), object.getId());
 			if (!Utils.isEmptyList(listAssenze)) {
 				logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".controllaCampiObbligatori sovraposizione di periodi ");
-				msg.add(new ResponseMessage("è gia presente un'assenza per il periodo impostato"));
+				msg.add(new ResponseMessage("ï¿½ gia presente un'assenza per il periodo impostato"));
 				return false;
 			}
 		} catch (CustomException e) {

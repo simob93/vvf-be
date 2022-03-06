@@ -62,8 +62,8 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 			String content = String.format(
 					"Di seguito sono riportare le informazioni per accedere al gestionale: " + "<br>Nome utente: %s "
 							+ "<br>Password (Provvisoria): %s"
-							+ "<br>Al primo accesso al gestionale ti sar‡ richiesto di cambiare la password"
-							+ "<br>Se non sai perchÈ hai ricevuto questa e-mail, cancellala pure.\r\n"
+							+ "<br>Al primo accesso al gestionale ti sar√† richiesto di cambiare la password"
+							+ "<br>Se non sai perch√® hai ricevuto questa e-mail, cancellala pure.\r\n"
 							+ "<br><hr>Non rispondere a questa email perche viene generata automaticamente",
 					object.getUsername(), pwd);
 			MailObject obj = new MailObject(CostantiVVF.MAIL_OBJECT_NEW_ACCOUNT, object.getEmail(), content);
@@ -113,8 +113,8 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 			utentiManager.update(utente);
 
 			String content = String.format(
-					"Gentile utente <br> " + "La sua password Ë stata cambiata correttamente."
-							+ "<br>Se non sai perchÈ hai ricevuto questa e-mail, cancellala pure.\r\n"
+					"Gentile utente <br> " + "La sua password √® stata cambiata correttamente."
+							+ "<br>Se non sai perch√® hai ricevuto questa e-mail, cancellala pure.\r\n"
 							+ "<br><hr>Non rispondere a questa email perche viene generata automaticamente",
 					utente.getUsername());
 			MailObject obj = new MailObject(CostantiVVF.MAIL_OBJECT_CHANGE_PASSWORD_ACCOUNT, utente.getEmail(), content);
@@ -215,8 +215,8 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 				String content = String.format(
 						"Di seguito sono riportare le informazioni per accedere al gestionale: " + "<br>Nome utente: %s "
 								+ "<br>Password (Provvisoria): %s"
-								+ "<br>Al primo accesso al gestionale ti sar‡ richiesto di cambiare la password"
-								+ "<br>Se non sai perchÈ hai ricevuto questa e-mail, cancellala pure.\r\n"
+								+ "<br>Al primo accesso al gestionale ti sar√† richiesto di cambiare la password"
+								+ "<br>Se non sai perch√® hai ricevuto questa e-mail, cancellala pure.\r\n"
 								+ "<br><hr>Non rispondere a questa email perche viene generata automaticamente",
 								data.getUsername(), randomPwd);
 				MailObject obj = new MailObject(CostantiVVF.MAIL_OBJECT_RESET_PASSWORD, data.getEmail(), content);
@@ -266,8 +266,8 @@ public class UtentiService extends DbServiceStandard<Utenti> {
 			String content = String.format(
 					"Gentile utente, in seguito alla richiesta di recupero password, sono riportare le nuove informazioni per accedere al gestionale: "
 							+ "<br>Nome utente: %s " + "<br>Password (Provvisoria): %s"
-							+ "<br>Al primo accesso al gestionale ti sar‡ richiesto di cambiare la password"
-							+ "<br>Se non sai perchÈ hai ricevuto questa e-mail, cancellala pure.\r\n"
+							+ "<br>Al primo accesso al gestionale ti sar√† richiesto di cambiare la password"
+							+ "<br>Se non sai perch√® hai ricevuto questa e-mail, cancellala pure.\r\n"
 							+ "<br><hr>Non rispondere a questa email perche viene generata automaticamente",
 							utente.getUsername(), newPwd);
 			MailObject obj = new MailObject(CostantiVVF.MAIL_OBJECT_RECOVER_PASSWORD, email, content);

@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.TurniPianifica;
 import it.vvfriva.repository.TurniPianificaRepository;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -231,8 +230,7 @@ public class TurniPianificaManager extends DbManagerStandard<TurniPianifica>  {
 
 
 	@Override
-	public boolean controllaCampiObbligatori(TurniPianifica object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(TurniPianifica object, List<ResponseMessage> msg) {
 		return true;
 	}
 

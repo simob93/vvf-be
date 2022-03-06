@@ -1,6 +1,5 @@
 package it.vvfriva.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,9 +13,7 @@ import it.vvfriva.managers.DbManagerStandard;
 import it.vvfriva.managers.VigileCertificatiManager;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.models.ModelPortletVigileCertificati;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
-import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 /**
@@ -55,43 +52,20 @@ public class VigileCertificatiService extends DbServiceStandard<VigileCertificat
 	}
 
 	public JsonResponse<List<VigileCertificati>> saveOrUpdate(List<VigileCertificati> vigileCertificati, DbOperation action) {
-
-		Boolean success = true;
-		List<ResponseMessage> message = new ArrayList<>();
-		JsonResponse<List<VigileCertificati>> result = null;
-		try {
-			/*
-			 * per ogni certificato eseguo una insert or update in base se il campo id Ë
-			 * avvalorato, i controlli di validit‡ del dato vengono eseguiti all'interno del
-			 * dbManager
-			 */
-			for (VigileCertificati vigileCertificato : vigileCertificati) {
-				if (!Utils.isValidId(vigileCertificato.getId())) {
-					vigileCertificato.setId(null);
-					vigileCertificatiManager.save(vigileCertificato);
-				} else {
-					vigileCertificatiManager.update(vigileCertificato);
-				}
-				
+		/*
+		 * per ogni certificato eseguo una insert or update in base se il campo id √®
+		 * avvalorato, i controlli di validit√† del dato vengono eseguiti all'interno del
+		 * dbManager
+		 */
+		for (VigileCertificati vigileCertificato : vigileCertificati) {
+			if (!Utils.isValidId(vigileCertificato.getId())) {
+				vigileCertificato.setId(null);
+				vigileCertificatiManager.save(vigileCertificato);
+			} else {
+				vigileCertificatiManager.update(vigileCertificato);
 			}
-			message.add(new ResponseMessage(ResponseMessage.ERRORE, Messages.getMessage("operation.ok")));
-
-		} catch (CustomException ex) {
-			success = false;
-			message = ex.getErrorList();
-			ex.printStackTrace();
-			logger.error("Excepetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", ex);
-			ex.printStackTrace();
-		} catch (Exception e) {
-			success = false;
-			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
-			e.printStackTrace();
-			logger.error("Excepetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
-			e.printStackTrace();
-		} finally {
-			result = new JsonResponse<List<VigileCertificati>>(success, message, vigileCertificati);
 		}
-		return result;
+		return new JsonResponse<List<VigileCertificati>>(true, "", null);
 	}
 	
 	public JsonResponse<List<ModelPortletVigileCertificati>> listForPortlet(Integer idVigile) {

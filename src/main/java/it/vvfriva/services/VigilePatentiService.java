@@ -64,43 +64,15 @@ public class VigilePatentiService extends DbServiceStandard<VigilePatenti> {
 	 * @return
 	 */
 	public JsonResponse<List<VigilePatenti> > saveOrUpdate(List<VigilePatenti>  vigilePatenti, DbOperation action) {
-		
-		Boolean success = true;
-		List<ResponseMessage> message = new ArrayList<>();
-		JsonResponse<List<VigilePatenti>> result = null;
-		try {
-			/*
-			 * per ogni patente eseguo una insert or update in base se il campo id è
-			 * avvalorato i controlli di validità del dato vengono eseguiti all'interno del
-			 * dbManager
-			 */
-			for (VigilePatenti vigilePatente: vigilePatenti) {
-				if (!Utils.isValidId(vigilePatente.getId())) {
-					vigilePatente.setId(null);
-					vigilePatentiManager.save(vigilePatente);
-				} else {
-					vigilePatentiManager.update(vigilePatente);
-				}
-				
+		for (VigilePatenti vigilePatente: vigilePatenti) {
+			if (!Utils.isValidId(vigilePatente.getId())) {
+				vigilePatente.setId(null);
+				vigilePatentiManager.save(vigilePatente);
+			} else {
+				vigilePatentiManager.update(vigilePatente);
 			}
-			message.add(new ResponseMessage(ResponseMessage.ERRORE, Messages.getMessage("operation.ok")));
-			
-		}catch (CustomException ex) {
-			success = false;
-			message = ex.getErrorList();
-			ex.printStackTrace();
-			logger.error("Excepetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", ex);
-			ex.printStackTrace();
-		} catch (Exception e) {
-			success = false;
-			message.add(new ResponseMessage(ResponseMessage.ERRORE, e.getMessage()));
-			e.printStackTrace();
-			logger.error("Excepetion in function: " + this.getClass().getCanonicalName() + ".saveOrUpdate", e);
-			e.printStackTrace();
-		}finally {
-			result = new JsonResponse<List<VigilePatenti> >(success, message, vigilePatenti);
 		}
-		return result;
+		return  new JsonResponse<List<VigilePatenti> >(true, "", null);
 	}
 	/**
 	 * 

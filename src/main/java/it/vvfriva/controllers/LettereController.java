@@ -14,7 +14,7 @@ import it.vvfriva.services.LettereTurniService;
 
 @Controller
 @RequestMapping(path="/lettere")
-public class LettereTurniController {
+public class LettereController {
 	
 	@Autowired LettereTurniService lettereTurniService;
 	/**

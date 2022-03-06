@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import it.vvfriva.entity.Area;
 import it.vvfriva.repository.AreaRepository;
 import it.vvfriva.utils.CostantiVVF;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
@@ -91,7 +90,7 @@ public class AreaManager extends DbManagerStandard<Area> {
 		return data;
 	}
 	@Override
-	public boolean controllaCampiObbligatori(Area object, List<ResponseMessage> msg) throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Area object, List<ResponseMessage> msg){
 		return false;
 	}
 }

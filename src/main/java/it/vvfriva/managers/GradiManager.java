@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Gradi;
 import it.vvfriva.entity.Servizio;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
@@ -89,44 +90,37 @@ public class GradiManager extends DbManagerStandard<Gradi> {
 	 * @return ritorna in base al servizio passato, l'ultimo grado attivo (quello con data fine a null) 
 	 * @throws Exception
 	 */
-	public Gradi getLastActiveGrado(Integer idServizio, Date al) throws Exception {
+	public Gradi getLastActiveGrado(Integer idServizio, Date al)  {
 		
 		if (!Utils.isValidId(idServizio)) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(Messages.getMessage("search.ko")).append(": ")
 			.append(Messages.getMessageFormatted("field.err.mandatory", new String[] {"idServizio"}));
-			throw new Exception(sb.toString());
+			throw new UserFriendlyException(sb.toString());
 		}
 		
 		Gradi data = null;
-		try {
-			
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-		    CriteriaQuery<Gradi> cq = cb.createQuery(Gradi.class);
-		    Root<Gradi> gradi = cq.from(Gradi.class);
-		    List<Predicate> predicates = new ArrayList<Predicate>();
-		    predicates.add(cb.equal(gradi.get("idServizio"), idServizio));
-		    predicates.add(
-	    		cb.or(
-    				cb.isNull(gradi.get("al")),
-    				cb.lessThanOrEqualTo(gradi.get("al"), al)
-    		));
-		    cq.where(predicates.toArray(new Predicate[0]));
-		    cq.orderBy(cb.desc(gradi.get("dal")));
-		    List<Gradi> listGradi = em.createQuery(cq).setMaxResults(1).getResultList();
-		    if (!Utils.isEmptyList(listGradi)) {
-		    	data = listGradi.get(0);
-		    }
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new Exception(Messages.getMessage("search.ko"));
-		}
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+	    CriteriaQuery<Gradi> cq = cb.createQuery(Gradi.class);
+	    Root<Gradi> gradi = cq.from(Gradi.class);
+	    List<Predicate> predicates = new ArrayList<Predicate>();
+	    predicates.add(cb.equal(gradi.get("idServizio"), idServizio));
+	    predicates.add(
+    		cb.or(
+				cb.isNull(gradi.get("al")),
+				cb.lessThanOrEqualTo(gradi.get("al"), al)
+		));
+	    cq.where(predicates.toArray(new Predicate[0]));
+	    cq.orderBy(cb.desc(gradi.get("dal")));
+	    List<Gradi> listGradi = em.createQuery(cq).setMaxResults(1).getResultList();
+	    if (!Utils.isEmptyList(listGradi)) {
+	    	data = listGradi.get(0);
+	    }
 		return data;
 	}
 
 	@Override
-	public boolean controllaCampiObbligatori(Gradi object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Gradi object, List<ResponseMessage> msg) {
 		if (!Utils.isValidDate(object.getDal())) {
 			logger.error("Exception in method: " + this.getClass().getCanonicalName() + ".checkCampiObbligatori invalid filed data dal");
 			msg.add(new ResponseMessage("Campo data dal obbligatorio"));

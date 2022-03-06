@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Gradi;
 import it.vvfriva.entity.Servizio;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.repository.ServizioRepository;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -119,47 +119,37 @@ public class ServizioManager extends DbManagerStandard<Servizio> {
 	 * @return ritorna l'ultimo servizio attivo in a partire da una determinata data di un singolo vigile 
 	 * @throws Exception
 	 */	
-	public Servizio getLast(Integer idVigile, Date data) throws Exception {
+	public Servizio getLast(Integer idVigile, Date data)  {
 		
 		if (!Utils.isValidId(idVigile)) {
 			logger.error("Exception in function: 'getLastActiveServizio' invalid field idVigile");
 			StringBuilder sb = new StringBuilder();
 			sb.append(Messages.getMessage("search.ko")).append(": ");
 			sb.append(Messages.getMessageFormatted("field.err.mandatory", new Object[] { Messages.getMessage("field.idVigile") }));
-			throw new Exception(sb.toString());
+			throw new UserFriendlyException (sb.toString());
 		}
-		
 		Servizio result = null;
-		data = Utils.isValidDate(data) ? new Date() : new Date();
-		
-		try {
-			
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-		    CriteriaQuery<Servizio> cq = cb.createQuery(Servizio.class);
-		 
-		    Root<Servizio> servizio = cq.from(Servizio.class);
-		    
-		    List<Predicate> predicates = new ArrayList<Predicate>();
-		    
-		    predicates.add(cb.equal(servizio.get("idVigile"), idVigile));
-	    	predicates.add(cb.lessThanOrEqualTo(servizio.get("dateStart"), data));
-		    
-		    cq.where(predicates.toArray(new Predicate[0]));
-		    cq.orderBy(cb.desc(servizio.get("dateStart")));
-		    List<Servizio> listServizo = em.createQuery(cq).setMaxResults(1).getResultList();	
-		    if (!Utils.isEmptyList(listServizo)) {
-		    	result = listServizo.get(0);
-		    }
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Exception in functiion: " + this.getClass().getCanonicalName() +".listByArea", e);
-			throw new Exception(Messages.getMessage("search.ko"));
-		}
-		return result;
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+	    CriteriaQuery<Servizio> cq = cb.createQuery(Servizio.class);
+	 
+	    Root<Servizio> servizio = cq.from(Servizio.class);
+	    
+	    List<Predicate> predicates = new ArrayList<Predicate>();
+	    
+	    predicates.add(cb.equal(servizio.get("idVigile"), idVigile));
+    	predicates.add(cb.lessThanOrEqualTo(servizio.get("dateStart"), data));
+	    
+	    cq.where(predicates.toArray(new Predicate[0]));
+	    cq.orderBy(cb.desc(servizio.get("dateStart")));
+	    List<Servizio> listServizo = em.createQuery(cq).setMaxResults(1).getResultList();	
+	    if (!Utils.isEmptyList(listServizo)) {
+	    	result = listServizo.get(0);
+	    }
+	    return result;
 	}
 	
 	@Override
-	public boolean controllaCampiObbligatori(Servizio object, List<ResponseMessage> msg) throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Servizio object, List<ResponseMessage> msg) {
 		if (!Utils.isValidDate(object.getDateStart())) {
 			logger.error("Can't persist record invalid field 'date start'");
 			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new Object[] {Messages.getMessage("field.date.start")})));
@@ -181,7 +171,7 @@ public class ServizioManager extends DbManagerStandard<Servizio> {
 	}
 	
 	@Override
-	public void operazioneDopoInserimento(Servizio object) throws Exception, CustomException {
+	public void operazioneDopoInserimento(Servizio object){
 		if (Utils.isValidId(object.getGrado())) {
 			//viene inserito anche il grado
 			Gradi grado = new Gradi();
@@ -193,7 +183,7 @@ public class ServizioManager extends DbManagerStandard<Servizio> {
 		}
 	}
 	@Override
-	public void operazionePrimaDiInserire(Servizio object) throws Exception, CustomException {
+	public void operazionePrimaDiInserire(Servizio object)  {
 		Servizio ultimoServizio = getLast(object.getIdVigile(), object.getDateStart());
 		if (ultimoServizio != null && !Utils.isValidDate(ultimoServizio.getDateEnd())) {
 			//chiudo il precedente servizio				
@@ -202,7 +192,7 @@ public class ServizioManager extends DbManagerStandard<Servizio> {
 		}
 	}
 	@Override
-	public void operazioneDopoModifica(Servizio object) throws Exception, CustomException {
+	public void operazioneDopoModifica(Servizio object){
 		if (Utils.isValidDate(object.getDateEnd())) {
 			Gradi grado = gradiManager.getLastActiveGrado(object.getId(), object.getDateEnd());
 			if (grado != null && !Utils.isValidDate(grado.getAl())) {

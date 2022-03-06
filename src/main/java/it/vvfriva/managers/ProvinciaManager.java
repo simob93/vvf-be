@@ -35,18 +35,11 @@ public class ProvinciaManager {
 	 */
 	public List<Provincie> listCity() throws Exception {
 		List<Provincie> data = null;
-		try {
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-		    CriteriaQuery<Provincie> cq = cb.createQuery(Provincie.class);
-		    Root<Provincie> scad = cq.from(Provincie.class);
-		    cq.orderBy(cb.asc(scad.get("name")));
-			data = em.createQuery(cq).getResultList();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Exception in function: " + this.getClass().getCanonicalName() + ".list", e);
-			throw new Exception(Messages.getMessage("search.ko"));
-		}
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+	    CriteriaQuery<Provincie> cq = cb.createQuery(Provincie.class);
+	    Root<Provincie> scad = cq.from(Provincie.class);
+	    cq.orderBy(cb.asc(scad.get("name")));
+		data = em.createQuery(cq).getResultList();
 		return data;
 	}
 	

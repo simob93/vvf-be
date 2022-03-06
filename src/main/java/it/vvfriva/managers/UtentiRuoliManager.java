@@ -16,8 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.UtentiRuoli;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.repository.UtentiRuoliRepository;
-import it.vvfriva.utils.CustomException;
+import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 /**
@@ -55,14 +56,14 @@ public class UtentiRuoliManager extends DbManagerStandard<UtentiRuoli> {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(Utils.errorInMethod(e.getMessage()));
+			throw new UserFriendlyException(Messages.getMessage("search.ko"));
 		}
 		return data;
 	}
 
 
 	@Override
-	public boolean controllaCampiObbligatori(UtentiRuoli object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(UtentiRuoli object, List<ResponseMessage> msg) {
 		return true;
 	}
 }

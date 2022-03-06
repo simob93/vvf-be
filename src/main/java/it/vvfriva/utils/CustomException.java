@@ -25,5 +25,14 @@ public class CustomException extends Exception {
 	public void setErrorList(List<ResponseMessage> errorList) {
 		this.errorList = errorList;
 	}
+	
+	@Override
+	public String getMessage() {
+		String msg = "";
+		for(ResponseMessage resp: this.errorList) {
+			msg += resp.getTesto();
+		}
+		return msg;
+	}
 
 }

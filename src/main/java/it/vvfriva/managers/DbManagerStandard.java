@@ -2,6 +2,7 @@ package it.vvfriva.managers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Table;
@@ -16,9 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import it.vvfriva.enums.DbOperation;
 import it.vvfriva.enums.EnumsChiaviEsterne;
 import it.vvfriva.enums.EnumsChiaviEsterneAction;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.interfaces.EntityInfo;
 import it.vvfriva.interfaces.IDBManagerOperation;
-import it.vvfriva.utils.CustomException;
+import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
@@ -40,15 +42,19 @@ public abstract class DbManagerStandard<T>  implements IDBManagerOperation<T> {
 	 * @throws Exception 
 	 */
 	@Transactional
-	public void save(T object) throws Exception, CustomException {
+	public void save(T object) {
 		List<ResponseMessage> msg = new ArrayList<ResponseMessage>();
 		boolean puoiProcedere = controllaCampiObbligatori(object, msg);
 		if (!puoiProcedere) {
-			throw new CustomException(msg);
+			if (Utils.isEmptyList(msg)) {
+				throw new UserFriendlyException(Messages.getMessage("operation.ko"));
+			}
+			throw new UserFriendlyException(msg.stream().map(err -> err.getTesto()).collect(Collectors.joining(",")));
 		}
 		operazionePrimaDiInserire(object);
 		repository.save(object);
 		operazioneDopoInserimento(object);
+		
 	}
 	/**
 	 * 
@@ -56,15 +62,21 @@ public abstract class DbManagerStandard<T>  implements IDBManagerOperation<T> {
 	 * @throws Exception 
 	 */
 	@Transactional
-	public void update(T object) throws Exception, CustomException {
+	public void update(T object){
 		List<ResponseMessage> msg = new ArrayList<ResponseMessage>();
 		boolean puoiProcedere = controllaCampiObbligatori(object, msg);
 		if (!puoiProcedere) {
-			throw new CustomException(msg);
+			if (Utils.isEmptyList(msg)) {
+				throw new UserFriendlyException(Messages.getMessage("operation.ko"));
+			}
+			throw new UserFriendlyException(msg.stream().map(err -> err.getTesto()).collect(Collectors.joining(",")));
 		}
 		puoiProcedere = controllaIntegritaReferenziale(object, DbOperation.UPDATE, msg);
 		if (!puoiProcedere) {
-			throw new CustomException(msg);
+			if (Utils.isEmptyList(msg)) {
+				throw new UserFriendlyException(Messages.getMessage("operation.ko"));
+			}
+			throw new UserFriendlyException(msg.stream().map(err -> err.getTesto()).collect(Collectors.joining(",")));
 		}
 		operazionePrimaDiModificare(object);
 		repository.save(object);
@@ -76,16 +88,20 @@ public abstract class DbManagerStandard<T>  implements IDBManagerOperation<T> {
 	 * @throws Exception 
 	 */
 	@Transactional
-	public void delete(T object) throws Exception, CustomException {
+	public void delete(T object)  {
 		List<ResponseMessage> msg = new ArrayList<ResponseMessage>();
 		boolean puoiProcedere = false;
 		puoiProcedere = controllaIntegritaReferenziale(object, DbOperation.DELETE, msg);
 		if (!puoiProcedere) {
-			throw new CustomException(msg);
+			if (Utils.isEmptyList(msg)) {
+				throw new UserFriendlyException(Messages.getMessage("operation.ko"));
+			}
+			throw new UserFriendlyException(msg.stream().map(err -> err.getTesto()).collect(Collectors.joining(",")));
 		}
 		operazionePrimaDiCancellare(object);
 		repository.delete(object);
 		operazioneDopoCancellazione(object);
+		
 	}
 	/**
 	 * 

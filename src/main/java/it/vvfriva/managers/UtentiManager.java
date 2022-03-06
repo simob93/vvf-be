@@ -26,7 +26,6 @@ import it.vvfriva.entity.Utenti;
 import it.vvfriva.entity.UtentiRuoli;
 import it.vvfriva.enums.RuoliDefault;
 import it.vvfriva.repository.UtentiRepository;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -151,8 +150,7 @@ public class UtentiManager extends DbManagerStandard<Utenti> implements UserDeta
 	}
 	
 	@Override
-	public boolean controllaCampiObbligatori(Utenti object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Utenti object, List<ResponseMessage> msg) {
 		if (Utils.isEmptyString(object.getNome())) {
 			logger.error(Utils.errorInMethod("Cant't persist record Utenti invalid field nome"));
 			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {"Nome"})));
@@ -194,14 +192,14 @@ public class UtentiManager extends DbManagerStandard<Utenti> implements UserDeta
 	
 	
 	@Override
-	public void operazionePrimaDiModificare(Utenti object) throws Exception, CustomException {
+	public void operazionePrimaDiModificare(Utenti object) {
 		Utenti utente = this.getObjById(object.getId());
 		if (utente != null) {
 			object.setPwd(utente.getPwd());
 		}
 	}
 	@Override
-	public void operazionePrimaDiInserire(Utenti object) throws Exception, CustomException {
+	public void operazionePrimaDiInserire(Utenti object) {
 		if (Utils.isEmptyList(object.getRuolo())) {
 			//creazione ruolo utenti di default;
 			UtentiRuoli ruolo = new UtentiRuoli();

@@ -3,9 +3,11 @@ package it.vvfriva.repository;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import it.vvfriva.entity.Area;
 
+@Repository
 public interface AreaRepository extends CrudRepository<Area, Integer>  {
 	/**
 	 * 

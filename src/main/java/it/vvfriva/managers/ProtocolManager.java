@@ -49,7 +49,7 @@ public class ProtocolManager extends DbManagerStandard<Protocol> {
 	/**
 	 * 
 	 * @param firstResult     - possibilita di paginare la lista
-	 * @param maxResult       - possibilità di paginare la lista
+	 * @param maxResult       - possibilita di paginare la lista
 	 * @param oggetto            - campo di ricerca
 	 * @param idFaldone      - tipologia di ricerca
 	 * @param from            - a partire da
@@ -125,8 +125,7 @@ public class ProtocolManager extends DbManagerStandard<Protocol> {
 
 
 	@Override
-	public boolean controllaCampiObbligatori(Protocol object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Protocol object, List<ResponseMessage> msg) {
 		//data del protoccollo obbligatoria
 		if (!Utils.isValidDate(object.getDate())) {
 			logger.error("Can't persist record invalid field 'date'");
@@ -148,7 +147,7 @@ public class ProtocolManager extends DbManagerStandard<Protocol> {
 	}
 
 	@Override
-	public void operazioneDopoInserimento(Protocol object) throws Exception, CustomException {
+	public void operazioneDopoInserimento(Protocol object)  {
 		em.flush();
 		em.createNamedStoredProcedureQuery("calc_num_prot").setParameter("id", object.getId())
 		.executeUpdate();

@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.Menu;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.models.TreeNodeMenu;
 import it.vvfriva.repository.MenuRepository;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -88,7 +88,7 @@ public class MenuManager extends DbManagerStandard<Menu> {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Menu> listMenu(boolean children) throws Exception {
+	public List<Menu> listMenu(boolean children) {
 		List<Menu> data = null;
 		try {
 			
@@ -104,13 +104,13 @@ public class MenuManager extends DbManagerStandard<Menu> {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(Utils.errorInMethod(e.getMessage()));
-			throw new Exception(Messages.getMessage("search.ko"));
+			throw new UserFriendlyException(Messages.getMessage("search.ko"));
 		}
 		return data;
 	}
 	
 	@Override
-	public boolean controllaCampiObbligatori(Menu object, List<ResponseMessage> msg) throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Menu object, List<ResponseMessage> msg) {
 		return false;
 	}
 }

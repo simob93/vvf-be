@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.SettingScadenze;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.repository.PersonScadenzeRepository;
 import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
@@ -56,7 +57,7 @@ public class PersonScadenzeManager extends DbManagerStandard<SettingScadenze> {
 	 * @return
 	 * @throws Exception
 	 */
-	public SettingScadenze getByIdPerson(Integer idPerson) throws Exception {
+	public SettingScadenze getByIdPerson(Integer idPerson) {
 		
 		if (!Utils.isValidId(idPerson)) {
 			logger.error("Exception in function: 'getByIdPerson' invalid field idPerson");
@@ -76,15 +77,14 @@ public class PersonScadenzeManager extends DbManagerStandard<SettingScadenze> {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Exception in functiion: " + this.getClass().getCanonicalName() +".getByIdPerson", e);
-			throw new Exception(Messages.getMessage("search.ko"));
+			throw new UserFriendlyException(Messages.getMessage("search.ko"));
 		}
 		return !Utils.isEmptyList(data) ? data.get(0) : null;
 	}
 
 
 	@Override
-	public boolean controllaCampiObbligatori(SettingScadenze object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(SettingScadenze object, List<ResponseMessage> msg) {
 		return true;
 	}
 	

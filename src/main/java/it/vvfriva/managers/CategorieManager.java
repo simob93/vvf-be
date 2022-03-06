@@ -62,8 +62,7 @@ public class CategorieManager extends DbManagerStandard<Categorie> {
 	}
 
 	@Override
-	public boolean controllaCampiObbligatori(Categorie object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Categorie object, List<ResponseMessage> msg) {
 		if (Utils.isEmptyString(object.getDescrizione())) {
 			logger.warn("Can't persist record 'Categorie'  invalid field 'descrizione'");
 			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {Messages.getMessage("field.descrizione")})));

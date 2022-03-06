@@ -20,7 +20,6 @@ import it.vvfriva.entity.Person;
 import it.vvfriva.entity.SettingScadenze;
 import it.vvfriva.repository.PersonRepository;
 import it.vvfriva.utils.CostantiVVF;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -52,53 +51,45 @@ public class PersonManager extends DbManagerStandard<Person> {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Person> list(List<Integer> idAreas, String listStrId, Boolean gestScadenza, boolean loadScadenze) throws Exception {
+	public List<Person> list(List<Integer> idAreas, String listStrId, Boolean gestScadenza, boolean loadScadenze) {
 		List<Person> data = null;
-		try {
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-		    CriteriaQuery<Person> cq = cb.createQuery(Person.class);
-		 
-		    Root<Person> person = cq.from(Person.class);
-		    List<Predicate> predicates = new ArrayList<Predicate>();
-		    
-		    if (!Utils.isEmptyList(idAreas)) {
-		    	In<Integer> inClause = cb.in(person.get("idArea"));
-		    	for (Integer idArea : idAreas) {
-		    		inClause.value(idArea);
-		    	}
-		        predicates.add(inClause);
-		        
-		    } else if (!Utils.isEmptyString(listStrId)) {
-		    	In<Integer> inClause = cb.in(person.get("id"));
-		    	List<Integer>ids = Utils.convertStringToIntegerList(listStrId);
-		    	for (Integer idArea : ids) {
-		    		inClause.value(idArea);
-		    	}
-		        predicates.add(inClause);
-		    }
-		    if (gestScadenza != null && gestScadenza == true) {
-		    	predicates.add(cb.equal(person.get("enabledExpiry"), CostantiVVF.TRUE));
-		    }
-		    cq.where(predicates.toArray(new Predicate[0]));
-		    cq.orderBy(cb.asc(person.get("name")));
-		    data = em.createQuery(cq).getResultList();
-		    
-		    if (!Utils.isEmptyList(data) && loadScadenze) {
-				for(Person p: data) {
-					if (p.getEnabledExpiry()) {
-						SettingScadenze scadenza = personScadenzeManager.getByIdPerson(p.getId());
-						if (scadenza != null) {
-							p.setScadenza(scadenza);
-						}
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+	    CriteriaQuery<Person> cq = cb.createQuery(Person.class);
+	 
+	    Root<Person> person = cq.from(Person.class);
+	    List<Predicate> predicates = new ArrayList<Predicate>();
+	    
+	    if (!Utils.isEmptyList(idAreas)) {
+	    	In<Integer> inClause = cb.in(person.get("idArea"));
+	    	for (Integer idArea : idAreas) {
+	    		inClause.value(idArea);
+	    	}
+	        predicates.add(inClause);
+	        
+	    } else if (!Utils.isEmptyString(listStrId)) {
+	    	In<Integer> inClause = cb.in(person.get("id"));
+	    	List<Integer>ids = Utils.convertStringToIntegerList(listStrId);
+	    	for (Integer idArea : ids) {
+	    		inClause.value(idArea);
+	    	}
+	        predicates.add(inClause);
+	    }
+	    if (gestScadenza != null && gestScadenza == true) {
+	    	predicates.add(cb.equal(person.get("enabledExpiry"), CostantiVVF.TRUE));
+	    }
+	    cq.where(predicates.toArray(new Predicate[0]));
+	    cq.orderBy(cb.asc(person.get("name")));
+	    data = em.createQuery(cq).getResultList();
+	    
+	    if (!Utils.isEmptyList(data) && loadScadenze) {
+			for(Person p: data) {
+				if (p.getEnabledExpiry()) {
+					SettingScadenze scadenza = personScadenzeManager.getByIdPerson(p.getId());
+					if (scadenza != null) {
+						p.setScadenza(scadenza);
 					}
 				}
 			}
-		    
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-			logger.error("Exception in functiion: " + this.getClass().getCanonicalName() + ".listByEnabledExpiry", e);
-			throw new Exception(Messages.getMessage("search.ko"));
 		}
 	    return data;
 	}
@@ -179,7 +170,7 @@ public class PersonManager extends DbManagerStandard<Person> {
 	}
 	
 	@Override
-	public void operazioneDopoInserimento(Person object) throws Exception, CustomException {
+	public void operazioneDopoInserimento(Person object)  {
 		if (object.getEnabledExpiry()) {
 			this.personScadenzeManager.update(object.getScadenza());
 		} else {
@@ -190,13 +181,13 @@ public class PersonManager extends DbManagerStandard<Person> {
 		}
 	}
 	@Override
-	public void operazionePrimaDiInserire(Person object) throws Exception, CustomException {
+	public void operazionePrimaDiInserire(Person object) {
 		if (object.getScadenza() != null && object.getEnabledExpiry()) {
 			object.getScadenza().setIdPerson(object.getId());
 		} 
 	}
 	@Override
-	public void operazioneDopoModifica(Person object) throws Exception, CustomException {
+	public void operazioneDopoModifica(Person object) {
 		if (object.getEnabledExpiry()) {
 			this.personScadenzeManager.update(object.getScadenza());
 		} else {
@@ -207,7 +198,7 @@ public class PersonManager extends DbManagerStandard<Person> {
 		}
 	}
 	@Override
-	public void operazionePrimaDiModificare(Person object) throws Exception, CustomException {
+	public void operazionePrimaDiModificare(Person object) {
 		if (object.getScadenza() != null && object.getEnabledExpiry()) {
 			object.getScadenza().setIdPerson(object.getId());
 		}

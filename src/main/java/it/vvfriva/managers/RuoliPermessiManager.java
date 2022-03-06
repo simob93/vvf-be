@@ -18,10 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.RuoliPermessi;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.models.TreeNodeMenu;
 import it.vvfriva.repository.RuoliPermessiRepository;
 import it.vvfriva.utils.CostantiVVF;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -45,32 +45,25 @@ public class RuoliPermessiManager extends DbManagerStandard<RuoliPermessi> {
 	 * @return ritorna i permessi di un determinato ruolo passato a parametro
 	 * @throws Exception
 	 */
-	public List<RuoliPermessi> getPermessiByIdRuolo(Integer idRuolo) throws Exception {
+	public List<RuoliPermessi> getPermessiByIdRuolo(Integer idRuolo) {
 		if (!Utils.isValidId(idRuolo)) {
 			logger.error(Utils.errorInMethod("invalid filed idRuolo"));
 			StringBuilder sb = new StringBuilder();
 			sb.append(Messages.getMessage("search.ko")).append(": ")
 					.append(Messages.getMessageFormatted("field.err.mandatory", new Object[] { "idRuolo" }));
-			throw new Exception(sb.toString());
+			throw new UserFriendlyException(sb.toString());
 		}
 		List<RuoliPermessi> data = null;
-		try {
-			
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-		    CriteriaQuery<RuoliPermessi> cq = cb.createQuery(RuoliPermessi.class);
-		 
-		    Root<RuoliPermessi> ruoloPermesso = cq.from(RuoliPermessi.class);
-		    List<Predicate> predicates = new ArrayList<Predicate>();
-		    predicates.add(cb.equal(ruoloPermesso.get("idRuolo"), idRuolo));
-		    cq.where(predicates.toArray(new Predicate[0]));
-		    data = em.createQuery(cq)
-		    		.getResultList();
-		   			
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(Utils.errorInMethod(e.getMessage()));
-			throw new Exception(Messages.getMessage("search.ko"));
-		}
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+	    CriteriaQuery<RuoliPermessi> cq = cb.createQuery(RuoliPermessi.class);
+	 
+	    Root<RuoliPermessi> ruoloPermesso = cq.from(RuoliPermessi.class);
+	    List<Predicate> predicates = new ArrayList<Predicate>();
+	    predicates.add(cb.equal(ruoloPermesso.get("idRuolo"), idRuolo));
+	    cq.where(predicates.toArray(new Predicate[0]));
+	    data = em.createQuery(cq)
+	    		.getResultList();
+	   			
 		return data;
 	}
 	
@@ -140,8 +133,7 @@ public class RuoliPermessiManager extends DbManagerStandard<RuoliPermessi> {
 
 
 	@Override
-	public boolean controllaCampiObbligatori(RuoliPermessi object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(RuoliPermessi object, List<ResponseMessage> msg) {
 		return true;
 	}
 }

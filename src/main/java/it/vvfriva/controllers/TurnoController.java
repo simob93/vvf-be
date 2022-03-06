@@ -1,33 +1,23 @@
 package it.vvfriva.controllers;
 
+import it.vvfriva.managers.PersonManager;
+import it.vvfriva.models.*;
+import it.vvfriva.services.TurnoEventoService;
+import it.vvfriva.utils.ReportService;
+import it.vvfriva.utils.Utils;
+import net.sf.jasperreports.engine.JRException;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import it.vvfriva.managers.PersonManager;
-import it.vvfriva.models.JsonResponse;
-import it.vvfriva.models.KeyValue;
-import it.vvfriva.models.ModelPianificazioneTurni;
-import it.vvfriva.models.TurnoRpt;
-import it.vvfriva.models.TurnoRptTe;
-import it.vvfriva.services.TurnoEventoService;
-import it.vvfriva.utils.ReportService;
-import it.vvfriva.utils.Utils;
-import net.sf.jasperreports.engine.JRException;
 
 @Controller
 @RequestMapping(path="/turni")
@@ -44,10 +34,10 @@ public class TurnoController {
 	 * @return
 	 */
 	@GetMapping(path="/calc")
-	public @ResponseBody JsonResponse<List<ModelPianificazioneTurni>> calc(
+	public @ResponseBody JsonResponse<List<ModelPianificazioneTurni>> calcolaTurnario(
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dal , 
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate al) { 
-		return turnoService.calc(dal != null ? dal.toDate() : null, al != null ? al.toDate() : null);
+		return turnoService.calcolaTurnario(dal != null ? dal.toDate() : null, al != null ? al.toDate() : null);
 	}
 	/**
 	 * stampa del turnario
@@ -70,12 +60,12 @@ public class TurnoController {
 		 Map<String, Object> parameters = new HashMap<String, Object>();
 	
 		try {
-			 JsonResponse<List<ModelPianificazioneTurni>> respTurni = turnoService.calc(dal != null ? dal.toDate() : null, al != null ? al.toDate() : null);
+			 JsonResponse<List<ModelPianificazioneTurni>> respTurni = turnoService.calcolaTurnario(dal != null ? dal.toDate() : null, al != null ? al.toDate() : null);
 			 if (respTurni != null && respTurni.getSuccess() == true) {
 				 
 				 List<ModelPianificazioneTurni> listTurni = respTurni.getData();
 				 TurnoRptTe turnoTe = new TurnoRptTe();
-				 Integer prevIdsquadra = null;
+				 String prevSquadra = null;
 				 
 				 List<TurnoRpt> dettaglioTurni = new ArrayList<TurnoRpt>();
 				 List<Object> listForReport = new ArrayList<Object>();
@@ -86,7 +76,7 @@ public class TurnoController {
 					 
 					 
 					 
-					 if (!Utils.integerEquals(turno.getIdSquadra(), prevIdsquadra)) {
+					 if (!Utils.stringEguals(turno.getDescrSquadra(), prevSquadra)) {
 						 
 						 turnoTe = new TurnoRptTe();
 						 dettaglioTurni = new ArrayList<TurnoRpt>();
@@ -112,7 +102,7 @@ public class TurnoController {
 						 }
 					 }
 					 dettaglioTurni.add(new TurnoRpt(turno));
-					 prevIdsquadra = turno.getIdSquadra();
+					 prevSquadra = turno.getDescrSquadra();
 				 }
 				 ReportService.printReport("VVF_TurniTe", listForReport, parameters, out);
 			 

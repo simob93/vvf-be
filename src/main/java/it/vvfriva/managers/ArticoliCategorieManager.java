@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import it.vvfriva.entity.ArticoliCategorie;
 import it.vvfriva.repository.ArticoliCategorieRepository;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -74,8 +73,7 @@ public class ArticoliCategorieManager extends DbManagerStandard<ArticoliCategori
 
 
 	@Override
-	public boolean controllaCampiObbligatori(ArticoliCategorie object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(ArticoliCategorie object, List<ResponseMessage> msg) {
 		if (!Utils.isValidId(object.getIdArticolo())) {
 			logger.warn("Can't persist record 'ArticoliCategorie'  invalid field 'idArticolo'");
 			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory",

@@ -176,8 +176,7 @@ public class VigilePatentiManager extends DbManagerStandard<VigilePatenti> {
 	}
 
 	@Override
-	public boolean controllaCampiObbligatori(VigilePatenti object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(VigilePatenti object, List<ResponseMessage> msg) {
 		/*
 		 * sono neccessari al fine di un insermiento ok! i campi numero patente
 		 * solitamente alfanumerico data di svolgimento patente e tipologia di patete
@@ -216,7 +215,7 @@ public class VigilePatentiManager extends DbManagerStandard<VigilePatenti> {
 	}
 
 	@Override
-	public void operazioneDopoInserimento(VigilePatenti object) throws Exception, CustomException {
+	public void operazioneDopoInserimento(VigilePatenti object) {
 		if (Utils.isValidDate(object.getDateExpiration())) {
 			scadenzeManager.insertExp(object.getId(), object.getDate(), object.getDateExpiration(),
 					CostantiVVF.AREA_PATENTI_SERVIZIO, object.getIdVigile());

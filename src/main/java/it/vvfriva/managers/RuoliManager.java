@@ -20,8 +20,8 @@ import it.vvfriva.entity.Menu;
 import it.vvfriva.entity.Ruoli;
 import it.vvfriva.entity.RuoliPermessi;
 import it.vvfriva.entity.UtentiRuoli;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.utils.CostantiVVF;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -72,7 +72,7 @@ public class RuoliManager extends DbManagerStandard<Ruoli> {
 	 * @param object
 	 * @throws Exception 
 	 */
-	public void gestisciRuoliPermessi(Ruoli object) throws Exception {
+	public void gestisciRuoliPermessi(Ruoli object) {
 		List<RuoliPermessi> permessiRuolo = object.getRuoliPermessi();
 		if (Utils.isEmptyList(object.getRuoliPermessi())) {
 			permessiRuolo = this.ruoliPermessiManager.getPermessiByIdRuolo(object.getId());
@@ -100,8 +100,7 @@ public class RuoliManager extends DbManagerStandard<Ruoli> {
 	}
 	
 	@Override
-	public boolean controllaCampiObbligatori(Ruoli object, List<ResponseMessage> msg)
-			throws CustomException, Exception {
+	public boolean controllaCampiObbligatori(Ruoli object, List<ResponseMessage> msg){
 		if (Utils.isEmptyString(object.getDescrizione())) {
 			msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] {Messages.getMessage("field.descrizione")})));
 			return false;
@@ -109,19 +108,19 @@ public class RuoliManager extends DbManagerStandard<Ruoli> {
 		return true;
 	}
 	@Override
-	public void operazioneDopoInserimento(Ruoli object) throws Exception, CustomException {
+	public void operazioneDopoInserimento(Ruoli object){
 		this.gestisciRuoliPermessi(object);
 	}
 	@Override
-	public void operazioneDopoModifica(Ruoli object) throws Exception, CustomException {
+	public void operazioneDopoModifica(Ruoli object) {
 		this.gestisciRuoliPermessi(object);
 	}
 	@Override
-	public void operazionePrimaDiCancellare(Ruoli object) throws Exception, CustomException {
+	public void operazionePrimaDiCancellare(Ruoli object){
 		List<UtentiRuoli> utenti = utentiRuoliManager.getUtentiByIdRuolo(object.getId());
 		if (!Utils.isEmptyList(utenti)) {
 			// profoilo movimentato.
-			throw new Exception(Messages.getMessage("profilo.delete.in.use"));
+			throw new UserFriendlyException(Messages.getMessage("profilo.delete.in.use"));
 		}
 	}
 
