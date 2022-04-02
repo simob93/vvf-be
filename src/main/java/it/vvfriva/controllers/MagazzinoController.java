@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import it.vvfriva.entity.Articoli;
 import it.vvfriva.entity.ArticoliCategorie;
 import it.vvfriva.entity.ArticoliDepositi;
-import it.vvfriva.entity.ArticoliScadenza;
 import it.vvfriva.entity.Categorie;
 import it.vvfriva.entity.Deposito;
 import it.vvfriva.models.ArticoliScadenzaInsertDto;
@@ -26,6 +25,7 @@ import it.vvfriva.models.ArticoliScadenzaSearch;
 import it.vvfriva.models.ArticoliScadenzeDto;
 import it.vvfriva.models.ArticoliSearch;
 import it.vvfriva.models.JsonResponse;
+import it.vvfriva.models.KeyValuePeriodo;
 import it.vvfriva.models.VvfJsonResponse;
 import it.vvfriva.services.ArticoliCategorieService;
 import it.vvfriva.services.ArticoliDepositiService;
@@ -191,6 +191,24 @@ public class MagazzinoController {
 			@RequestBody ArticoliScadenzaInsertDto input) {
 		return articoliScadenzaService.modificaScadenzaArticolo(scadenzaId, input);
 	}
+	/**
+	 * 
+	 * @param scadenzaId
+	 * @return
+	 */
+	@PutMapping("/articoli/scadenza/{scadenzaId}/effettua")
+	public @ResponseBody VvfJsonResponse<Integer> effettuaScadenzaArticolo(@PathVariable int scadenzaId) {
+		return articoliScadenzaService.effettuaScadenzaArticolo(scadenzaId);
+	}
+	/**
+	 * 
+	 * @param scadenzaId
+	 * @return
+	 */
+	@PutMapping("/articoli/scadenza/{scadenzaId}/riattiva")
+	public @ResponseBody VvfJsonResponse<Integer> riattivaScadenzaArticolo(@PathVariable int scadenzaId) {
+		return articoliScadenzaService.riattivaScadenzaArticolo(scadenzaId);
+	}
 
 	/**
 	 * eliminazione di una scadenza
@@ -202,15 +220,14 @@ public class MagazzinoController {
 	private @ResponseBody VvfJsonResponse<Integer> eliminaScadenzaArticolo(@PathVariable int scadenzaId) {
 		return articoliScadenzaService.eliminaScadenzaArticolo(scadenzaId);
 	}
-
 	/**
-	 *
+	 * 
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/articoli/scadenza/delete")
-	private @ResponseBody JsonResponse<ArticoliScadenza> eliminaScadenzaArticolo(@RequestParam("id") Integer id) {
-		return articoliScadenzaService.delete(id);
+	@GetMapping("/articoli/{articoloId}/scadenza/storico-rinnovi")
+	private @ResponseBody VvfJsonResponse<List<KeyValuePeriodo>> storicoRinnoviArticolo(@PathVariable int articoloId) {
+		return articoliScadenzaService.getStoricoRinnoviArticolo(articoloId);
 	}
 
 	/*************************************************************************************

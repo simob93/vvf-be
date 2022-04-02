@@ -1,10 +1,11 @@
 package it.vvfriva.enums;
 
+import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.Utils;
 
 public enum TipoScadenzaArticolo {
-    CONTROLLO(1, "articoli.tipo.scadenza.1"),
-    ESTINZIONE(2, "articoli.tipo.scadenza.2");
+    CONTROLLO(1, "articoli.scadenza.tipo.1"),
+    ESTINZIONE(2, "articoli.scadenza.tipo.2");
 
     private int tipoScadenzaId;
     private String descrizione;
@@ -23,7 +24,7 @@ public enum TipoScadenzaArticolo {
     }
 
     public String getDescrizione() {
-        return descrizione;
+        return  Messages.getMessage(descrizione);
     }
 
     public void setDescrizione( String descrizione ) {

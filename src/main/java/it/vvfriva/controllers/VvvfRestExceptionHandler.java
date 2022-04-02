@@ -9,19 +9,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.models.JsonResponse;
-import it.vvfriva.utils.Utils;
 
 @ControllerAdvice
 public class VvvfRestExceptionHandler extends ResponseEntityExceptionHandler {
 	@SuppressWarnings("rawtypes")
 	@ExceptionHandler(UserFriendlyException.class)
     public ResponseEntity<JsonResponse> handleException(UserFriendlyException ex) {
-		JsonResponse<Object> resp = new JsonResponse<Object>();
-		resp.setSuccess(false);
-		resp.setData(null);
-		if( !Utils.isEmptyString(ex.getReason())) {
-			resp.createArrayMsg(ex.getReason());
-		}
+		JsonResponse<Object> resp = new JsonResponse<Object>(false, ex.getReason(), null);
 		return new ResponseEntity<JsonResponse>(
 	    		resp, new HttpHeaders(), ex.getStatus());
 			    
@@ -34,13 +28,7 @@ public class VvvfRestExceptionHandler extends ResponseEntityExceptionHandler {
 	@SuppressWarnings("rawtypes")
 	@ExceptionHandler(Exception.class)
     public ResponseEntity<JsonResponse> handleGenericException(Exception ex) {
-		JsonResponse<Object> resp = new JsonResponse<Object>();
-		resp.setSuccess(false);
-		resp.setData(null);
-		resp.setData(null);
-		if( !Utils.isEmptyString(ex.getMessage())) {
-			resp.createArrayMsg(ex.getMessage());
-		}
+		JsonResponse<Object> resp = new JsonResponse<Object>(false, ex.getMessage(), null);
 		return new ResponseEntity<JsonResponse>(
 	    		resp, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 			    

@@ -2,12 +2,16 @@ package it.vvfriva.models;
 
 import java.util.Date;
 
+import it.vvfriva.enums.EnumTrueFalse;
+
 /**
  *
  */
 public class ArticoliScadenzaInsertDto {
     private Integer id;
     private Integer articoloId;
+    private String note;
+    private EnumTrueFalse effettuata;
     private Integer tipoScadenza;
     private Date dataRinnovo;
     private Date dataScadenza;
@@ -70,5 +74,33 @@ public class ArticoliScadenzaInsertDto {
     public void setTipoScadenza( Integer tipoScadenza ) {
         this.tipoScadenza = tipoScadenza;
     }
+
+	/**
+	 * @return the note
+	 */
+	public String getNote() {
+		return note;
+	}
+
+	/**
+	 * @param note the note to set
+	 */
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	/**
+	 * @return the effettuata
+	 */
+	public EnumTrueFalse getEffettuata() {
+		return effettuata;
+	}
+
+	/**
+	 * @param effettuata the effettuata to set
+	 */
+	public void setEffettuata(EnumTrueFalse effettua) {
+		this.effettuata = effettua;
+	}
 
 }

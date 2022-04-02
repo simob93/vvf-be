@@ -39,6 +39,9 @@ public class ArticoliScadenza implements EntityInfo {
 
 	@Column(name = "data_scadenza")
 	private Date dataScadenza;
+	
+	@Column(name = "note")
+	private String note;
 
 	@Column(name = "tipo_scadenza")
 	@Enumerated(EnumType.STRING)
@@ -124,6 +127,20 @@ public class ArticoliScadenza implements EntityInfo {
 	 */
 	public void setEffettuato(EnumTrueFalse effettuato) {
 		this.effettuato = effettuato;
+	}
+
+	/**
+	 * @return the note
+	 */
+	public String getNote() {
+		return note;
+	}
+
+	/**
+	 * @param note the note to set
+	 */
+	public void setNote(String note) {
+		this.note = note;
 	}
 
 }

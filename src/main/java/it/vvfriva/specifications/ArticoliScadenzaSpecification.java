@@ -25,11 +25,17 @@ public class ArticoliScadenzaSpecification  {
 	 * @param effettuato
 	 * @return
 	 */
-	public static Specification<ArticoliScadenza> ConScadenzeAttive() {
+	public static Specification<ArticoliScadenza> ConScadenzaAttiva() {
 		return  (root, query, criteriaBuilder) -> {
 			return criteriaBuilder.or(
 					criteriaBuilder.equal(root.get("effettuato"), EnumTrueFalse.F), 
 					criteriaBuilder.isNull(root.get("effettuato")));
+		};
+	} 
+	
+	public static Specification<ArticoliScadenza> ConStorico() {
+		return  (root, query, criteriaBuilder) -> {
+			return criteriaBuilder.equal(root.get("effettuato"), EnumTrueFalse.T); 
 		};
 	} 
 }

@@ -11,29 +11,27 @@ import it.vvfriva.utils.Utils;
 public class ArticoliScadenzeDto {
 
 	private Integer scadenzaId;
-    private Integer idArticolo;
+    private Integer articoloId;
+    private Integer tipoScadenza;
     private String descrArticolo;
+    private String note;
+    private String descrTipoScadenza;
     private Date dataScadenza;
-    private Date dataRinnovo;
 
-    public ArticoliScadenzeDto(Integer scadenzaId, Integer idArticolo, String descrArticolo, Date dataScadenza, Date dataRinnovo) {
-        this.idArticolo = idArticolo;
+    public ArticoliScadenzeDto(Integer scadenzaId, Integer idArticolo, String descrArticolo, Date dataScadenza, String note, String descrTipoScadenza, Integer tipoScadenza) {
+        this.articoloId = idArticolo;
         this.descrArticolo = descrArticolo;
         this.dataScadenza = dataScadenza;
-        this.dataRinnovo = dataRinnovo;
         this.scadenzaId = scadenzaId;
+        this.note = note;
+        this.descrTipoScadenza = descrTipoScadenza;
+        this.tipoScadenza = tipoScadenza;
     }
 
     public ArticoliScadenzeDto() {
     }
 
-    public Integer getIdArticolo() {
-        return idArticolo;
-    }
-
-    public void setIdArticolo( Integer idArticolo ) {
-        this.idArticolo = idArticolo;
-    }
+    
 
     public String getDescrArticolo() {
         return descrArticolo;
@@ -65,19 +63,6 @@ public class ArticoliScadenzeDto {
         return warningScadenza;
     }
 
-	/**
-	 * @return the dataRinnovo
-	 */
-	public Date getDataRinnovo() {
-		return dataRinnovo;
-	}
-
-	/**
-	 * @param dataRinnovo the dataRinnovo to set
-	 */
-	public void setDataRinnovo(Date dataRinnovo) {
-		this.dataRinnovo = dataRinnovo;
-	}
 
 	/**
 	 * @return the scadenzaId
@@ -91,6 +76,62 @@ public class ArticoliScadenzeDto {
 	 */
 	public void setScadenzaId(Integer scadenzaId) {
 		this.scadenzaId = scadenzaId;
+	}
+
+	/**
+	 * @return the articoloId
+	 */
+	public Integer getArticoloId() {
+		return articoloId;
+	}
+
+	/**
+	 * @param articoloId the articoloId to set
+	 */
+	public void setArticoloId(Integer articoloId) {
+		this.articoloId = articoloId;
+	}
+
+	/**
+	 * @return the note
+	 */
+	public String getNote() {
+		return note;
+	}
+
+	/**
+	 * @param note the note to set
+	 */
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	/**
+	 * @return the descrTipoScadenza
+	 */
+	public String getDescrTipoScadenza() {
+		return descrTipoScadenza;
+	}
+
+	/**
+	 * @param descrTipoScadenza the descrTipoScadenza to set
+	 */
+	public void setDescrTipoScadenza(String descrTipoScadenza) {
+		this.descrTipoScadenza = descrTipoScadenza;
+	}
+
+	/**
+	 * @return the tipoScadenza
+	 */
+	public Integer getTipoScadenza() {
+		return tipoScadenza;
+	}
+
+	/**
+	 * @param tipoScadenza the tipoScadenza to set
+	 */
+	public void setTipoScadenza(Integer tipoScadenza) {
+		this.tipoScadenza = tipoScadenza;
 	}
 
 
