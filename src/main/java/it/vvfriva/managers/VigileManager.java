@@ -176,23 +176,8 @@ public class VigileManager extends DbManagerStandard<Vigile> {
 	 * @return
 	 * @throws Exception
 	 */
-	public Vigile getById(Integer id) throws Exception {
-
-		if (!Utils.isValidId(id)) {
-			logger.error("Excepetion in function: 'getById', invalid filed id");
-			StringBuilder sb = new StringBuilder();
-			sb.append(Messages.getMessage("search.ko")).append(": ").append(Messages
-					.getMessageFormatted("field.err.mandatory", new Object[] { Messages.getMessage("field.id") }));
-			throw new Exception(sb.toString());
-		}
-		Vigile data = null;
-		try {
-			data = repository.findById(id).orElse(null);
-		} catch (Exception e) {
-			logger.error("Exception in function: " + this.getClass().getCanonicalName() + ".getById", e);
-			throw new Exception(Messages.getMessage("search.ko"));
-		}
-		return data;
+	public Vigile getById(Integer id) {
+		return repository.findById(id).orElse(null);
 	}
 
 	@Override
