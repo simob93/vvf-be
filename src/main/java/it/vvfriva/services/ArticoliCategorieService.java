@@ -1,6 +1,5 @@
 package it.vvfriva.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import it.vvfriva.entity.ArticoliCategorie;
 import it.vvfriva.managers.ArticoliCategorieManager;
 import it.vvfriva.models.JsonResponse;
+import it.vvfriva.models.VvfJsonResponse;
 import it.vvfriva.utils.Messages;
-import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
 
 /**
@@ -67,39 +66,17 @@ public class ArticoliCategorieService extends DbServiceStandard<ArticoliCategori
 	 * @return
 	 */
 	@Transactional
-	public JsonResponse<Boolean> saveAll(List<ArticoliCategorie> listArtCat) {
-		String message = null;
-		Boolean success = true;
-		List<ResponseMessage> msg = new ArrayList<ResponseMessage>();
-		JsonResponse<Boolean> result = null;
-		if (Utils.isEmptyList(listArtCat)) {
-			return new JsonResponse<Boolean>(false, Messages.getMessageFormatted("field.list.empty",
-					new String[] { Messages.getMessage("field.categorie") }), null);
-		}
-		try {
-			for (ArticoliCategorie cat: listArtCat) {
-				if ((cat.getEliminare() != null) && (cat.getEliminare().booleanValue())) {
-					this.manager.delete(cat);
-				}
-				else if (!Utils.isValidId(cat.getId())) {
-					this.manager.save(cat);
-				} else {
-					this.manager.update(cat);
-				}
+	public VvfJsonResponse<Boolean> saveAll(List<ArticoliCategorie> listArtCat) {
+		for (ArticoliCategorie cat: listArtCat) {
+			if ((cat.getEliminare() != null) && (cat.getEliminare().booleanValue())) {
+				this.manager.delete(cat);
 			}
-			message = Messages.getMessage("operation.ok");
-		} catch (Exception e) {
-			success = false;
-			message = Messages.getMessage("operation.ko");
-			e.printStackTrace();
-			msg.add(new ResponseMessage(ResponseMessage.ERRORE, message));
-			logger.error(Utils.errorInMethod(e.getMessage()));
-		} finally {
-			if (success) {
-				msg.add(new ResponseMessage(ResponseMessage.NESSUNO, message));
+			else if (!Utils.isValidId(cat.getId())) {
+				this.manager.save(cat);
+			} else {
+				this.manager.update(cat);
 			}
-			result = new JsonResponse<Boolean>(success, msg, null);
 		}
-		return result;
+		return new VvfJsonResponse<Boolean>(true, null, null);
 	}
 }

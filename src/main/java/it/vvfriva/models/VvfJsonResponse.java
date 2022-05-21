@@ -4,7 +4,7 @@ import java.util.List;
 
 public class VvfJsonResponse<T> {
 
-	private boolean succcess;
+	private boolean success;
 	private T data;
     private String message;
     private List<String> errors;
@@ -14,8 +14,8 @@ public class VvfJsonResponse<T> {
 	}
 	
 	
-	public VvfJsonResponse(boolean succcess, String message, T result) {
-		this.succcess = succcess;
+	public VvfJsonResponse(boolean success, String message, T result) {
+		this.success = success;
 		this.message = message;
 		this.data = result;
 	}
@@ -24,14 +24,14 @@ public class VvfJsonResponse<T> {
 	/**
 	 * @return the succcess
 	 */
-	public boolean isSucccess() {
-		return succcess;
+	public boolean isSuccess() {
+		return success;
 	}
 	/**
 	 * @param succcess the succcess to set
 	 */
-	public void setSucccess(boolean succcess) {
-		this.succcess = succcess;
+	public void setSucccess(boolean success) {
+		this.success = success;
 	}
 	/**
 	 * @return the result

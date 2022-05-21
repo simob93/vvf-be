@@ -259,7 +259,7 @@ public class MagazzinoController {
 	 * @return
 	 */
 	@PostMapping("/articoli/categorie/new")
-	public @ResponseBody JsonResponse<Boolean> insertArticoloCategoria(@RequestBody List<ArticoliCategorie> artCat) {
+	public @ResponseBody VvfJsonResponse<Boolean> insertArticoloCategoria(@RequestBody List<ArticoliCategorie> artCat) {
 		return articoliCatService.saveAll(artCat);
 	}
 

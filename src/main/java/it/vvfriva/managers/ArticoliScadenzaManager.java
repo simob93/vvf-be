@@ -51,10 +51,13 @@ public class ArticoliScadenzaManager extends DbManagerStandard<ArticoliScadenza>
 		} else {
 			queryFilter = queryFilter.and(ArticoliScadenzaSpecification.ConScadenzaAttiva());
 		}
-		List<ArticoliScadenza> listScadenza = repository
-				.findAll(queryFilter, Sort.by(Order.asc("idArticolo"), Order.asc("dataScadenza")));
-		
-		if (search.isStorico()) {
+		List<ArticoliScadenza> listScadenza = null;
+		if (!search.isStorico()) {
+			listScadenza = repository
+					.findAll(queryFilter, Sort.by(Order.asc("dataScadenza")));
+		} else {
+			listScadenza = repository
+					.findAll(queryFilter, Sort.by(Order.asc("idArticolo"), Order.asc("dataScadenza")));
 			ArticoliScadenza prev = null;
 			List<ArticoliScadenza> tmp = new ArrayList<ArticoliScadenza>();
 			for (ArticoliScadenza scadenzeStorico : listScadenza) {
@@ -66,7 +69,7 @@ public class ArticoliScadenzaManager extends DbManagerStandard<ArticoliScadenza>
 			}
 			listScadenza = tmp;
 		}
-		
+
 		return listScadenza.stream()
 				.map(scadenza -> new ArticoliScadenzeDto(scadenza.getId(), scadenza.getIdArticolo(),
 						scadenza.getArticolo().getDescrizione(), scadenza.getDataScadenza(), scadenza.getNote(),

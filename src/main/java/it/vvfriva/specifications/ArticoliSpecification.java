@@ -3,6 +3,7 @@ package it.vvfriva.specifications;
 import javax.persistence.criteria.JoinType;
 
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import it.vvfriva.entity.Articoli;
 import it.vvfriva.utils.Utils;
@@ -19,6 +20,15 @@ public class ArticoliSpecification {
 				return criteriaBuilder.conjunction();
 			}
 			return criteriaBuilder.equal(root.join("categorie", JoinType.INNER).get("idCategoria"), categoriaId);
+		};
+	} 
+	
+	public static Specification<Articoli> ConCodice(String codice) {
+		return  (root, query, criteriaBuilder) -> {
+			if (Utils.isEmptyString(codice)) {
+				return criteriaBuilder.conjunction();
+			}
+			return criteriaBuilder.equal(criteriaBuilder.lower(root.get("codice")), codice.trim().toLowerCase());
 		};
 	} 
 	/**
@@ -50,6 +60,15 @@ public class ArticoliSpecification {
 				return criteriaBuilder.conjunction();
 			}
 			return criteriaBuilder.equal(root.get("abilitaScadenza"), true);
+		};
+	}
+	
+	public static Specification<Articoli> ConIdDiversoDa(Integer id) {
+		return (root, query, criteriaBuilder) -> {
+			if (!Utils.isValidId(id)) {
+				return criteriaBuilder.conjunction();
+			}
+			return criteriaBuilder.notEqual(root.get("id"), id);
 		};
 	}
 	

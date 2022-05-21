@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import it.vvfriva.entity.ArticoliScadenza;
 import it.vvfriva.enums.EnumTrueFalse;
 import it.vvfriva.enums.TipoScadenzaArticolo;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.managers.ArticoliScadenzaManager;
 import it.vvfriva.models.ArticoliScadenzaInsertDto;
 import it.vvfriva.models.ArticoliScadenzaRinnovoInput;
@@ -17,6 +18,9 @@ import it.vvfriva.models.ArticoliScadenzeDto;
 import it.vvfriva.models.JsonResponse;
 import it.vvfriva.models.KeyValuePeriodo;
 import it.vvfriva.models.VvfJsonResponse;
+import it.vvfriva.repository.ArticoliScadenzaRepository;
+import it.vvfriva.specifications.ArticoliScadenzaSpecification;
+import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.Utils;
 
 /**
@@ -27,6 +31,9 @@ public class ArticoliScadenzaService extends DbServiceStandard< ArticoliScadenza
 
     @Autowired
     ArticoliScadenzaManager articoliScadenzaManager;
+    
+    @Autowired
+	ArticoliScadenzaRepository repository;
     /**
      * 
      * @param input
@@ -100,6 +107,13 @@ public class ArticoliScadenzaService extends DbServiceStandard< ArticoliScadenza
 	 */
 	public VvfJsonResponse<Integer> riattivaScadenzaArticolo(int scadenzaId) {
 		ArticoliScadenza scadenza = articoliScadenzaManager.getObjById(scadenzaId);
+		
+		// riattivo la scadenza se non trovo un altra scadenza attiva 
+		List<ArticoliScadenza> scadenzaArticolo = repository.findAll(ArticoliScadenzaSpecification
+				.ConIdArticolo(scadenza.getIdArticolo()).and(ArticoliScadenzaSpecification.ConScadenzaAttiva()));
+		if (scadenzaArticolo.size() > 0) {
+			throw new UserFriendlyException("l'operazione non è concessa, esiste già una scadenza");
+		}
 		scadenza.setEffettuato(EnumTrueFalse.F);
 		articoliScadenzaManager.update(scadenza);
 		return new VvfJsonResponse<Integer>(true, null, null);
