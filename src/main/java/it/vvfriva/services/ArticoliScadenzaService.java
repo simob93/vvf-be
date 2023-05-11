@@ -20,7 +20,6 @@ import it.vvfriva.models.KeyValuePeriodo;
 import it.vvfriva.models.VvfJsonResponse;
 import it.vvfriva.repository.ArticoliScadenzaRepository;
 import it.vvfriva.specifications.ArticoliScadenzaSpecification;
-import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.Utils;
 
 /**
@@ -44,6 +43,7 @@ public class ArticoliScadenzaService extends DbServiceStandard< ArticoliScadenza
         object.setIdArticolo(input.getArticoloId());
         object.setDataScadenza(input.getDataScadenza());
         object.setDataRinnovo(Utils.startOfDay(new Date()));
+        object.setNote(input.getNote());
         object.setTipoScadenza(TipoScadenzaArticolo.getById(input.getTipoScadenza()));
         articoliScadenzaManager.save( object );
         return new JsonResponse<Integer>(true, object.getId());

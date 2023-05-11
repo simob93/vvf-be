@@ -27,12 +27,12 @@ import it.vvfriva.interfaces.EntityInfo;
 	  @NamedStoredProcedureQuery(
 	    name = "calc_num_prot", 
 	    procedureName = "calc_num_prot", 
-	    resultClasses = {  }, 
 	    parameters = { 
 	        @StoredProcedureParameter(
-	          name = "id", 
-	          type = Integer.class, 
-	          mode = ParameterMode.IN) }) 
+	          name = "dataProtocollo", 
+	          type = Date.class, 
+	          mode = ParameterMode.IN),
+	        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "numero", type = Long.class)}) 
 	})
 @Table(name = "protocol")
 public class Protocol implements EntityInfo {

@@ -1,6 +1,5 @@
 package it.vvfriva.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,13 +11,12 @@ import it.vvfriva.entity.Area;
 import it.vvfriva.entity.Comuni;
 import it.vvfriva.entity.Provincie;
 import it.vvfriva.entity.SettingScadenze;
-import it.vvfriva.enums.EnumsTaglie;
 import it.vvfriva.managers.AreaManager;
 import it.vvfriva.managers.ComuneManager;
+import it.vvfriva.managers.PersonManager;
 import it.vvfriva.managers.PersonScadenzeManager;
 import it.vvfriva.managers.ProvinciaManager;
 import it.vvfriva.models.JsonResponse;
-import it.vvfriva.models.KeyValue;
 import it.vvfriva.utils.Configs;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.Utils;
@@ -31,6 +29,7 @@ public class GeneralService {
 	@Autowired ComuneManager townManager;
 	@Autowired ProvinciaManager districtManager;
 	@Autowired PersonScadenzeManager personScadenzeManager;
+	@Autowired PersonManager _personManager; 
 	@Autowired AreaManager areaManager;
 
 	/**
@@ -156,31 +155,6 @@ public class GeneralService {
 			logger.error(Utils.errorInMethod("Can't find 'versione programma'"));
 		} finally {
 			result = new JsonResponse<String>(success, message, data);
-		}
-		return result;
-	}
-	/**
-	 * Ritorna la lista di tutte le taglie 
-	 * @return
-	 */
-	public JsonResponse<List<KeyValue>> listTaglie() {
-		Boolean success = true;
-		String message = "";
-		List<KeyValue> data = null;
-		JsonResponse<List<KeyValue>> result = null;
-		try {
-			data = new ArrayList<KeyValue>();
-			for (EnumsTaglie taglia : EnumsTaglie.values()) {
-				data.add(new KeyValue(null, taglia.getDescr(), taglia.getCodice()));
-			}
-			message = Messages.getMessage("search.ok");
-		} catch (Exception e) {
-			success = false;
-			message = Messages.getMessage("search.ko");
-			e.printStackTrace();
-			logger.error("Exception in Method: " + this.getClass().getCanonicalName() + ".listTaglie" , e.getMessage());
-		} finally {
-			result = new JsonResponse<List<KeyValue>>(success, message, data);
 		}
 		return result;
 	}

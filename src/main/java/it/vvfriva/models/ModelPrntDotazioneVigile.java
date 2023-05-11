@@ -1,8 +1,6 @@
 package it.vvfriva.models;
 
 import java.math.BigDecimal;
-
-import it.vvfriva.enums.EnumsTaglie;
 /**
  * 
  * @author simone
@@ -26,7 +24,7 @@ public class ModelPrntDotazioneVigile {
 			String note) {
 		this.descrArticolo = descrArticolo;
 		this.quantita = quantita;
-		this.taglia = EnumsTaglie.getDescrizioneTaglia(taglia);
+		this.taglia = taglia;
 		this.dataConsegna = dataConsegna;
 		this.note = note;
 	}

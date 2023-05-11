@@ -57,13 +57,13 @@ public class ArticoliScadenzaManager extends DbManagerStandard<ArticoliScadenza>
 					.findAll(queryFilter, Sort.by(Order.asc("dataScadenza")));
 		} else {
 			listScadenza = repository
-					.findAll(queryFilter, Sort.by(Order.asc("idArticolo"), Order.asc("dataScadenza")));
+					.findAll(queryFilter, Sort.by(Order.asc("idArticolo"), Order.desc("dataScadenza")));
 			ArticoliScadenza prev = null;
 			List<ArticoliScadenza> tmp = new ArrayList<ArticoliScadenza>();
 			for (ArticoliScadenza scadenzeStorico : listScadenza) {
-				if (prev != null && 
-						!scadenzeStorico.getIdArticolo().equals(prev.getIdArticolo())) {
-					tmp.add(prev);
+				boolean inStrorico = prev == null || !prev.getIdArticolo().equals(scadenzeStorico.getIdArticolo());
+				if (inStrorico) {
+					tmp.add(scadenzeStorico);
 				}
 				prev = scadenzeStorico;
 			}

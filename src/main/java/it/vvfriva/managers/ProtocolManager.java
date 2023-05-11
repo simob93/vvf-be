@@ -1,11 +1,17 @@
 package it.vvfriva.managers;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
+import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
@@ -17,9 +23,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.vvfriva.controllers.VvvfRestExceptionHandler;
 import it.vvfriva.entity.Protocol;
+import it.vvfriva.exception.UserFriendlyException;
 import it.vvfriva.repository.ProtocolRepository;
-import it.vvfriva.utils.CustomException;
 import it.vvfriva.utils.Messages;
 import it.vvfriva.utils.ResponseMessage;
 import it.vvfriva.utils.Utils;
@@ -146,10 +153,25 @@ public class ProtocolManager extends DbManagerStandard<Protocol> {
 		return true;
 	}
 
+
 	@Override
-	public void operazioneDopoInserimento(Protocol object)  {
-		em.flush();
-		em.createNamedStoredProcedureQuery("calc_num_prot").setParameter("id", object.getId())
-		.executeUpdate();
+	public void operazionePrimaDiInserire(Protocol object) {
+				
+		StoredProcedureQuery spQuery = em.createNamedStoredProcedureQuery("calc_num_prot");
+		spQuery.setParameter("dataProtocollo", object.getDate());
+		spQuery.execute();
+		
+		Object numero = spQuery.getOutputParameterValue("numero");
+		
+		if (numero == null) {
+			throw new UserFriendlyException("Errore durante il calcolo del progressivo");
+		}
+
+		
+		DateFormat df = new SimpleDateFormat("yy"); // Just the year, with 2 digits
+		String formattedDate = df.format(object.getDate());
+
+		object.setStrUid(formattedDate + "/" + String.format("%06d", numero));
+		
 	}
 }

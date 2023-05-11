@@ -99,8 +99,8 @@ public class TurnoEventoService {
 					turni.add(new KeyValue(null, "Salto turno: " + (i + 1), null));
 				}
 			}
-			int numeroGiriSingolaSquadra = (numeroDiSettinanePassate / totaleSquadre);
-			int saltoVigili = (numeroGiriSingolaSquadra % listaVigiliAttivi.size());
+			int numeroGiriSquadre = (numeroDiSettinanePassate / totaleSquadre);
+			int saltoVigili = (numeroGiriSquadre % listaVigiliAttivi.size());
 
 			ModelPianificazioneTurni turnoModel = null;
 			int contatoreTurni = 0;
