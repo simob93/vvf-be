@@ -55,7 +55,7 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	VigilePatentiManager vigilePatentiManager;
 	
 	@Autowired
-	VigileCertificatiManager vigileCertificatiManager;
+	VigileCertificatiManager vigileCertificatiManager; 
 	
 	@Autowired
 	VigileManager vigileManager;
@@ -495,7 +495,7 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	
 	@Override
 	public void operazioneDopoInserimento(Scadenze object) {
-		Scadenze scadenza = getLastFrom(object.getDateFrom(), object.getIdRiferimento(), object.getIdArea(), 0);
+		Scadenze scadenza = getLastFrom(Utils.startOfDay(object.getDateFrom()), object.getIdRiferimento(), object.getIdArea(), 0);
 		if (scadenza != null) {
 			scadenza.setUpdateData(new Date());
 			scadenza.setRenew(1);
@@ -504,7 +504,7 @@ public class ScadenzeManager extends DbManagerStandard<Scadenze> {
 	}
 	@Override
 	public void operazionePrimaDiCancellare(Scadenze object) {
-		Scadenze scadenza = getLastFrom(object.getDateFrom(), object.getIdRiferimento(), object.getIdArea(), 1);
+		Scadenze scadenza = getLastFrom(Utils.startOfDay(object.getDateFrom()), object.getIdRiferimento(), object.getIdArea(), 1);
 		if (scadenza != null) {
 			scadenza.setRenew(null);
 			scadenza.setUpdateData(null);

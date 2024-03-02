@@ -200,8 +200,10 @@ public class Utils {
 	 */
 	public static Date startOfDay(Date data) {
 		LocalDateTime localDate = new LocalDateTime(data);
-		localDate.withTime(0, 0, 0, 0);
-		return localDate.toDate();
+		return localDate.withTime(0, 0, 0, 0).toDate();
+		/*return localDate.withMinuteOfHour(0)
+		.withHourOfDay(0)
+		.withSecondOfMinute(0).toDate();*/
 	}
 	/**
 	 * 
