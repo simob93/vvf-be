@@ -112,7 +112,7 @@ public class ArticoliScadenzaService extends DbServiceStandard< ArticoliScadenza
 		List<ArticoliScadenza> scadenzaArticolo = repository.findAll(ArticoliScadenzaSpecification
 				.ConIdArticolo(scadenza.getIdArticolo()).and(ArticoliScadenzaSpecification.ConScadenzaAttiva()));
 		if (scadenzaArticolo.size() > 0) {
-			throw new UserFriendlyException("l'operazione non Ë concessa, esiste gi‡ una scadenza");
+			throw new UserFriendlyException("l'operazione non √® concessa, esiste gi√† una scadenza");
 		}
 		scadenza.setEffettuato(EnumTrueFalse.F);
 		articoliScadenzaManager.update(scadenza);

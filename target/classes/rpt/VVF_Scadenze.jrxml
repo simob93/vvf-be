@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final utlizzo versione della libreria JasperReports6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VVF_Scadenze" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="96c750fa-5768-42b7-84d1-683b75daec39">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<subDataset name="Dataset1" uuid="0c6be552-795d-4890-93f7-eadf1c5e2fcd">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="descrVigile" class="java.lang.String"/>
+	<field name="descrAreaFormatted" class="java.lang.String"/>
+	<field name="dateExpirationFormatted" class="java.lang.String"/>
+	<field name="descrFormatted" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="-20" y="0" width="595" height="20" uuid="4a24f7dc-6fb6-45c1-b267-d40d4bada6fb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prossime scadenze Vigili del fuoco]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="180" height="19" uuid="f72fc1da-d666-4693-9ef9-2d9c57b8882c"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nominativo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="100" height="19" uuid="9b73494f-9a57-4740-996a-33d87265799d"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Categoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="160" height="19" uuid="4c819c8a-09cb-41c9-870c-09e4b85117c9"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data di scadenza prevista]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="0" width="100" height="19" uuid="9d6134a9-92f3-4e1e-950c-f77f557deb6c"/>
+				<textElement>
+					<font isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Oggetto]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="180" height="18" uuid="d71e5cff-3846-410c-bbb3-3a8b6281a8c9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7fbf2ab0-4ef2-49ea-9c2f-8a22456e5b1b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{descrVigile}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="0" width="100" height="18" uuid="27ab8162-a259-42bd-915d-81869963f19d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="00d83028-9c63-444d-8668-079748667aac"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{descrAreaFormatted}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="160" height="18" uuid="84d91744-bc34-449d-b26b-020cf57959db">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fd6c5e82-82e5-45e5-8306-721324c8c0a6"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{dateExpirationFormatted}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="100" height="18" uuid="fb766d0f-81cc-492b-8946-0c96ce7a4d67">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dab7ebf2-89dd-4021-a704-cce91f3ecdca"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{descrFormatted}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

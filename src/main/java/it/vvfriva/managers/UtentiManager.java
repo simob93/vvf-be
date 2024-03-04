@@ -106,7 +106,7 @@ public class UtentiManager extends DbManagerStandard<Utenti> implements UserDeta
 	 * Controlla la presenza di un record duplicato, avente stesso username
 	 * 
 	 * @param utente
-	 * @return true (se record duplicato) false (se il record non è gia stato inserito)
+	 * @return true (se record duplicato) false (se il record non Ã¨ gia stato inserito)
 	 * @throws Exception
 	 */
 	private boolean checkRecordDuplicato(Utenti utente) throws Exception {

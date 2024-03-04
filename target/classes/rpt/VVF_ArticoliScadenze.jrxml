@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final utlizzo versione della libreria JasperReports5.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VVF_Turni" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="96c750fa-5768-42b7-84d1-683b75daec39">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="testoStandard" vAlign="Middle">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="Table_TH" mode="Opaque" backcolor="#D0BBBB">
+		<box>
+			<pen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<topPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<leftPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<bottomPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<rightPen lineWidth="0.5" lineColor="#BBBBBB"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#E8E6E6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<topPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<leftPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<bottomPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<rightPen lineWidth="0.5" lineColor="#BBBBBB"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<topPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<leftPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<bottomPen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<rightPen lineWidth="0.5" lineColor="#BBBBBB"/>
+		</box>
+	</style>
+	<style name="testoLabel" vAlign="Middle" isBold="true">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#BBBBBB"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#D4D7D9">
+		<box>
+			<pen lineWidth="0.25" lineColor="#BBBBBB"/>
+			<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#BBBBBB"/>
+			<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#BBBBBB"/>
+			<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#BBBBBB"/>
+			<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#BBBBBB"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#BBBBBB"/>
+			<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#BBBBBB"/>
+			<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#BBBBBB"/>
+			<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#BBBBBB"/>
+			<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#BBBBBB"/>
+		</box>
+	</style>
+	<subDataset name="Dataset1" uuid="0c6be552-795d-4890-93f7-eadf1c5e2fcd">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="descrArticolo" class="java.lang.String"/>
+		<field name="dataScadenza" class="java.lang.String"/>
+		<field name="note" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="PAR_Intestazione" class="java.util.Collection"/>
+	<parameter name="PAR_ReportDir" class="java.lang.String"/>
+	<parameter name="PAR_ListaArticoli" class="java.util.Collection"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<columnHeader>
+		<band height="80">
+			<textField>
+				<reportElement style="testoLabel" mode="Opaque" x="0" y="0" width="555" height="19" backcolor="#D4D7D9" uuid="c0d8513d-e9be-4bea-8019-ddf4939c25e1"/>
+				<box>
+					<pen lineColor="#BBBBBB"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BBBBBB"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BBBBBB"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BBBBBB"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BBBBBB"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["SCADENZE ARTICOLI"]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="0" y="30" width="555" height="50" uuid="78c43d32-a97b-499f-838b-ba244410c788">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Dataset1" uuid="a7bbc146-5bc6-4e43-81e3-4c06ee4723e2">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{PAR_ListaArticoli})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="120" uuid="f7a8a01c-c0a2-4aff-864f-6dc92514b185">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna1"/>
+						<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+							<textField>
+								<reportElement style="testoLabel" x="0" y="0" width="120" height="30" uuid="82190754-b1b5-415d-b4ef-ad24788103ab"/>
+								<textElement textAlignment="Center">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Articolo"]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table 1_TD" height="20">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="testoStandard" x="0" y="0" width="120" height="20" uuid="3b0735a6-9ca2-4eff-a270-83d2819254fb">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement>
+									<paragraph leftIndent="4"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{descrArticolo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="80" uuid="71848801-e632-4a1f-a943-19c50f98417e">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna2"/>
+						<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<textField>
+								<reportElement style="testoLabel" x="0" y="0" width="80" height="30" uuid="8e73cf8d-5d1c-498c-ae47-b15dd5054f23"/>
+								<textElement textAlignment="Center">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Data Scadenza"]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table 1_TD" height="20">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="testoStandard" x="0" y="0" width="80" height="20" uuid="7dac1b7b-4580-4e73-94ef-f737660b3069">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement textAlignment="Center">
+									<paragraph leftIndent="4"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{dataScadenza}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="235" uuid="58d65c93-5185-453a-8809-f260508551a4">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna3"/>
+						<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<textField>
+								<reportElement style="testoLabel" x="0" y="0" width="235" height="30" uuid="52b1d22c-c3a0-4d0b-b72f-19921abc6629"/>
+								<textElement textAlignment="Center">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Note"]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table 1_TD" height="20">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="testoStandard" x="0" y="0" width="235" height="20" uuid="664411b7-3d53-4721-bd34-8ad07820dcd0">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement>
+									<paragraph leftIndent="4"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</columnHeader>
+</jasperReport>
