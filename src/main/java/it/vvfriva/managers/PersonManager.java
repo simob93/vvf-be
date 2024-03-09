@@ -74,7 +74,7 @@ public class PersonManager extends DbManagerStandard<Person> {
 	    	}
 	        predicates.add(inClause);
 	    }
-	    if (gestScadenza != null && gestScadenza == true) {
+	    if (gestScadenza != null && gestScadenza) {
 	    	predicates.add(cb.equal(person.get("enabledExpiry"), CostantiVVF.TRUE));
 	    }
 	    cq.where(predicates.toArray(new Predicate[0]));
@@ -153,7 +153,7 @@ public class PersonManager extends DbManagerStandard<Person> {
 				return false;
 			} else {
 				
-				if ( Utils.isValidId(object.getScadenza().getExpirationEvery()) ) {
+				if (!Utils.isValidId(object.getScadenza().getExpirationEvery()) ) {
 					logger.warn("Can't persist  record Person invalid filed expiration every");
 					msg.add(new ResponseMessage(Messages.getMessageFormatted("field.err.mandatory", new String[] { "frequenza non impostata" })));
 					return false;
