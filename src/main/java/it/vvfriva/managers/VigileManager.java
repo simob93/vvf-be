@@ -105,7 +105,7 @@ public class VigileManager extends DbManagerStandard<Vigile> {
 				+ "			where appoS.id_vigile = vig.id  and  appoS.date_start <= :al and ( (appoS.date_end is null) or (appoS.date_end >=:dal))) "
 				+ condizioneAssenze + "where ((cast(:idTeam as unsigned) is null) or (servizio.id_team = :idTeam))";
 		if (!assenti) {
-			query += " and not exists ( select ASS.ID from assenze ass where ass.id_vigile = vig.id and ass.dal <= :al and ((ass.al >= :dal)  or (ass.al is null)) ) ";
+			query += " and not exists ( select ass.id from assenze ass where ass.id_vigile = vig.id and ass.dal <= :al and ((ass.al >= :dal)  or (ass.al is null)) ) ";
 		}
 		if (!nonAttivi) {
 			query += " and servizio.id is not null";
